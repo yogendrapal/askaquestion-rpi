@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.quesrpi.beans.*;
+import com.quesrpi.payload.QuestionEntryReply;
 
 @Controller
 public class QuestionEntryController {

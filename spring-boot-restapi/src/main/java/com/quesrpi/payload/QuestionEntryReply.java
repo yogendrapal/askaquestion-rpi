@@ -1,4 +1,4 @@
-package com.quesrpi.beans;
+package com.quesrpi.payload;
 
 public class QuestionEntryReply {
 	int id;
