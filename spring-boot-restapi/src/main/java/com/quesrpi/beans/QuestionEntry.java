@@ -26,6 +26,11 @@ public class QuestionEntry {
 			return qent;
 	}
 	
+	public int getNewId() {
+		//this currently returns the index of the new entry as the id of question
+		return stored_data.size();
+	}
+	
 	public void add(Question q) {
 		stored_data.add(q);
 	}

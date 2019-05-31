@@ -16,7 +16,8 @@ public class QuestionEntryController {
 	  @ResponseBody
 	  public QuestionEntryReply newQuestion(@RequestBody Question q) {
 	  System.out.println("In newQuestin");
-	  		QuestionEntryReply qentreply = new QuestionEntryReply();           
+	  		QuestionEntryReply qentreply = new QuestionEntryReply();
+	  		q.setId(QuestionEntry.getInstance().getNewId());
 	  		QuestionEntry.getInstance().add(q);
 	        //We are setting the below value just to reply a message back to the caller
 	  		qentreply.setId(q.getId());
