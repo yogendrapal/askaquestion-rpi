@@ -35,7 +35,7 @@ public class FileController {
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/question/")
-                .path(fileName)
+                .path(qid)
                 .toUriString();
 
         return new UploadFileResponse(fileName, fileDownloadUri,
@@ -45,7 +45,7 @@ public class FileController {
 	@GetMapping("/question/{qid}")//downloadFile/{fileName:.+}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String qid, HttpServletRequest request) {
         // Load file as Resource
-        Resource resource = fileStorageService.loadFileAsResource(qid);
+        Resource resource = fileStorageService.loadFileAsResource(qid+".mp4");
 
         // Try to determine file's content type
         String contentType = null;
