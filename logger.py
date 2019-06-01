@@ -2,6 +2,7 @@ import json
 from datetime import datetime
 from config import *
 
+
 # log_db = {
 # 	'vidname':'temp.mp4',
 # 	'date':'',
@@ -28,6 +29,9 @@ def new_log_entry(filename):
 
 	#add the json extension
 	jsonfile = filename + '.json'
-	with open(jsonfile,'w') as outfile:
+	vidname=filename+ '.mp4'
+	with open("output/"+jsonfile,'w+') as outfile:
 		json.dump(ldb,outfile)
+	
+	
 	return
