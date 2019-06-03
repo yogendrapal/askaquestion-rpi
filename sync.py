@@ -38,7 +38,7 @@ def postjson(jsonfile,vidname):
 		print("\n[INFO]: response:\n",response.text)
 		response_json = json.loads(response.text)
 		if "fileDownloadUri" in response_json:
-			#video upload was successful, now video and json can be deleted
+			#video upload was successful, now video and json can now be deleted
 			os.system('rm -f output/%s'%jsonfile)
 			os.system('rm -f output/%s'%vidname)
 			print('[INFO]: deleted %s and %s from local file system'%(jsonfile,vidname))
