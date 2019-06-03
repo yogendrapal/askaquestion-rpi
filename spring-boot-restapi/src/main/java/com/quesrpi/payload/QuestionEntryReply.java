@@ -1,16 +1,29 @@
 package com.quesrpi.payload;
 
+import org.bson.types.ObjectId;
+
+import com.quesrpi.beans.Question;
+
 public class QuestionEntryReply {
-	int id;
+	ObjectId _id;
 	String date;
 	String time;
 	String machine_id;
 	String uploadStatus;
-	public int getId() {
-		return id;
+	
+	public QuestionEntryReply(Question q, String status) {
+		_id = q.get_oid();
+		date = q.getDate();
+		time = q.getTime();
+		machine_id = q.getMachine_id();
+		uploadStatus = status;
 	}
-	public void setId(int id) {
-		this.id = id;
+	
+	public String getId() {
+		return _id.toHexString();
+	}
+	public void setId(ObjectId id) {
+		this._id = id;
 	}
 	public String getDate() {
 		return date;
