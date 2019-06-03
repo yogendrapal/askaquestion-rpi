@@ -2,7 +2,8 @@ package com.quesrpi.controllers;
 
 import com.quesrpi.beans.Question;
 import com.quesrpi.payload.QuestionEntryReply;
-import com.quesrpi.repositories.QuestionRepository;
+import com.quesrpi.service.QuestionRepository;
+
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
