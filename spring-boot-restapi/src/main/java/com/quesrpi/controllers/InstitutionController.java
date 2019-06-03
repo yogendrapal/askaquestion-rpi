@@ -1,45 +1,54 @@
 package com.quesrpi.controllers;
 
-import java.util.List;
+import com.quesrpi.beans.Institution;
+import com.quesrpi.payload.InstitutionEntryReply;
+import com.quesrpi.service.InstitutionRepository;
 
-import org.springframework.stereotype.Controller;
+import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.quesrpi.beans.InstitutionEntry;
-import com.quesrpi.beans.Institution;
-import com.quesrpi.payload.InstitutionEntryReply;
+import javax.validation.Valid;
+import java.util.List;
 
-
-
-@Controller
-
+@RestController
+@RequestMapping("/institution")
 public class InstitutionController {
-
-	@RequestMapping(method = RequestMethod.POST, value="/institution/add")
-	  @ResponseBody
-	  public InstitutionEntryReply newInstitution(@RequestBody Institution q) {
-	  System.out.println("New Institution");
-	  		InstitutionEntryReply qentreply = new InstitutionEntryReply();
-	  		//q.setInstitute_id(InstitutionEntry.getInstance().getNewId());
-	  		InstitutionEntry.getInstance().add(q);
-	        //We are setting the below value just to reply a message back to the caller
-	  		qentreply.setInstitute_id(q.getInstitute_id());
-	  		qentreply.setName(q.getName());
-	  		qentreply.setLocation(q.getLocation());
-	        qentreply.setUploadStatus("Successful");
-	        return qentreply;
+	
+	@Autowired
+	private InstitutionRepository repository;
+	
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public List<Institution> getAllInstitutions() {
+	  return repository.findAll();
 	}
 	
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public Institution getInstitutionById(@PathVariable("id") ObjectId id) {
+	  return repository.findBy_id(id);
+	}
 	
-
-	@RequestMapping(method = RequestMethod.GET, value="/institution/")
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	public void modifyInstitutionById(@PathVariable("id") ObjectId id, @Valid @RequestBody Institution i) {
+	  i.set_id(id);
+	  repository.save(i);
+	}
 	
-	@ResponseBody
-	  public List<Institution> getAllInsitutions() {
-	  return InstitutionEntry.getInstance().getStoredRecords();
-	  }
+	@RequestMapping(value = "/add", method = RequestMethod.POST)
+	public InstitutionEntryReply createInstitution(@Valid @RequestBody Institution i) {
+	  i.set_id(ObjectId.get());
+	  repository.save(i);
+	  InstitutionEntryReply irply = new InstitutionEntryReply(i, "Successful");
+	  return irply;
+	}
+	
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	public void deleteInstitution(@PathVariable ObjectId id) {
+	  repository.delete(repository.findBy_id(id));
+	}
 	
 }

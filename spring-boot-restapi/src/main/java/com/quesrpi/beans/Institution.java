@@ -1,15 +1,28 @@
 package com.quesrpi.beans;
+import org.bson.types.ObjectId;
+
 
 public class Institution {
 
-	int institute_id;
+	public ObjectId _id;
+	
 	String name;
 	String location;
-	public int getInstitute_id() {
-		return institute_id;
+	
+	public Institution(ObjectId _id, String name, String location) {
+		this._id = _id;
+		this.name = name;
+		this.location = location;
 	}
-	public void setInstitute_id(int institute_id) {
-		this.institute_id = institute_id;
+	// ObjectId is converted to Hex string
+	public String get_id() {
+		return _id.toHexString();
+	}
+	public ObjectId get_oid() {
+		return _id;
+	}
+	public void set_id(ObjectId _id) {
+		this._id = _id;
 	}
 	public String getName() {
 		return name;

@@ -1,16 +1,28 @@
 package com.quesrpi.payload;
+import org.bson.types.ObjectId;
+
+import com.quesrpi.beans.Institution;
 
 public class InstitutionEntryReply {
 
-	int institute_id;
+	ObjectId _id;
 	String name;
 	String location;
 	String uploadStatus;
-	public int getInstitute_id() {
-		return institute_id;
+	
+	public InstitutionEntryReply(Institution i,String status) {
+		_id = i.get_oid();
+		name=i.getName();
+		location=i.getLocation();
+		uploadStatus= status;
+		
 	}
-	public void setInstitute_id(int institute_id) {
-		this.institute_id = institute_id;
+	
+	public String getId() {
+		return _id.toHexString();
+	}
+	public void setId(ObjectId id) {
+		this._id = id;
 	}
 	public String getName() {
 		return name;
