@@ -34,7 +34,7 @@ public class FileController {
         String fileName = fileStorageService.storeFile(file,qid);
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/question/")
+                .path("/question/video/")
                 .path(qid)
                 .toUriString();
 
@@ -42,7 +42,7 @@ public class FileController {
                 file.getContentType(), file.getSize());
     }
 	
-	@GetMapping("/question/{qid}")//downloadFile/{fileName:.+}")
+	@GetMapping("/question/video/{qid}")//downloadFile/{fileName:.+}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String qid, HttpServletRequest request) {
         // Load file as Resource
         Resource resource = fileStorageService.loadFileAsResource(qid+".mp4");
