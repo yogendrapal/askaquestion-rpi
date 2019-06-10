@@ -16,7 +16,7 @@ while True:
 	
 	if ch == 1:
 		fname = 'vid' + str(random.randint(100,1001))
-		avr.record('output/'+fname)
+		avr.record(OUTPUT_DIR+fname)
 	elif ch == 2:
 		avr.stop()
 		logger.new_log_entry(fname)

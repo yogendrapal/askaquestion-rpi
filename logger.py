@@ -30,7 +30,7 @@ def new_log_entry(filename):
 	#add the json extension
 	jsonfile = filename + '.json'
 	vidname=filename+ '.mp4'
-	with open("output/"+jsonfile,'w+') as outfile:
+	with open(OUTPUT_DIR+jsonfile,'w+') as outfile:
 		json.dump(ldb,outfile)
 	
 	

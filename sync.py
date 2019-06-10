@@ -4,9 +4,11 @@ import requests
 import json
 import time
 import os
+import pprint
+from config import *
 
 def sync2server():
-	for f in os.listdir("output/"):
+	for f in os.listdir(OUTPUT_DIR):
 		if f.endswith(".mp4"):
 			print('\n\n[INFO]: Syncing %s with server...'%f)
 			vid = f
@@ -16,32 +18,39 @@ def sync2server():
 
 def postjson(jsonfile,vidname):
 	# defining the api-endpoint  
-	API_ENDPOINT = "http://localhost:8081/question/add"
+	API_ENDPOINT = f"http://{API_HOST}:{API_PORT}/question/add"
 	# sending post request and saving response as response object
 	
-	with open("output/"+jsonfile) as json_file:
+	with open(OUTPUT_DIR+jsonfile) as json_file:
 		json_data = json.load(json_file) 
 		json_data1=json.dumps(json_data)
 	# print(json_data1)
 	headers = {'Accept' : 'application/json', 'Content-Type' : 'application/json'}
-	r = requests.post(url = API_ENDPOINT, data=json_data1,headers=headers)
+	
+	try:
+		r = requests.post(url = API_ENDPOINT, data=json_data1,headers=headers)
+	except:
+		print('[ERROR]: Unable to communicate with the server!')
+		return
 
 	# extracting response text  
 	response_text = r.text
-	print("[INFO]: response:\n",response_text)
 	response_json=json.loads(response_text)
+	print("[INFO]: response:")
+	pprint.pprint(response_json)
 	if "uploadStatus" in response_json and response_json["uploadStatus"] == "Successful":
 		id = response_json['id']
-		files = {'file': ('%s.mp4'%id,open("output/"+vidname, 'rb'),'video/mp4')}
+		files = {'file': ('%s.mp4'%id,open(OUTPUT_DIR+vidname, 'rb'),'video/mp4')}
 		time.sleep(1)
-		response = requests.post("http://localhost:8081/question/add/%s"%id, files=files)
-		print("\n[INFO]: response:\n",response.text)
+		response = requests.post(f"http://{API_HOST}:{API_PORT}/question/add/{id}", files=files)
+		print("\n[INFO]: response:")
 		response_json = json.loads(response.text)
+		pprint.pprint(response_json)
 		if "fileDownloadUri" in response_json:
 			#video upload was successful, now video and json can now be deleted
-			os.system('rm -f output/%s'%jsonfile)
-			os.system('rm -f output/%s'%vidname)
-			print('[INFO]: deleted %s and %s from local file system'%(jsonfile,vidname))
+			os.system('rm -f %s%s'%(OUTPUT_DIR,jsonfile))
+			os.system('rm -f %s%s'%(OUTPUT_DIR,vidname))
+			print('[INFO]: deleted %s and %s from local file system\n'%(jsonfile,vidname))
 		else:
 			print('[ERROR]: failed to upload video for id %s'%id)
 	else:
