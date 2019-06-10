@@ -5,6 +5,7 @@ import json
 import time
 import os
 import pprint
+import hashlib
 from config import *
 
 def sync2server():
@@ -18,7 +19,7 @@ def sync2server():
 
 def postjson(jsonfile,vidname):
 	# defining the api-endpoint  
-	API_ENDPOINT = f"http://{API_HOST}:{API_PORT}/question/add"
+	API_ENDPOINT = "http://%s:%d/question/add" %(API_HOST,API_PORT)
 	# sending post request and saving response as response object
 	
 	with open(OUTPUT_DIR+jsonfile) as json_file:
@@ -26,7 +27,7 @@ def postjson(jsonfile,vidname):
 		json_data1=json.dumps(json_data)
 	# print(json_data1)
 	headers = {'Accept' : 'application/json', 'Content-Type' : 'application/json'}
-	
+
 	try:
 		r = requests.post(url = API_ENDPOINT, data=json_data1,headers=headers)
 	except:
@@ -41,8 +42,9 @@ def postjson(jsonfile,vidname):
 	if "uploadStatus" in response_json and response_json["uploadStatus"] == "Successful":
 		id = response_json['id']
 		files = {'file': ('%s.mp4'%id,open(OUTPUT_DIR+vidname, 'rb'),'video/mp4')}
+		original_hash = hashlib.md5(open(OUTPUT_DIR+vidname, 'rb').read()).hexdigest()
 		time.sleep(1)
-		response = requests.post(f"http://{API_HOST}:{API_PORT}/question/add/{id}", files=files)
+		response = requests.post("http://%s:%d/question/add/%s"%(API_HOST,API_PORT,id), files=files)
 		print("\n[INFO]: response:")
 		response_json = json.loads(response.text)
 		pprint.pprint(response_json)
