@@ -16,10 +16,13 @@ import java.io.IOException;
 //import java.util.Arrays;
 //import java.util.List;
 //import java.util.stream.Collectors;
+import java.math.BigInteger;
 
 import com.quesrpi.payload.UploadFileResponse;
 import com.quesrpi.service.FileStorageService;
-
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 @ComponentScan({"com.quesrpi.service"})
 @RestController
 public class FileController {
@@ -31,15 +34,30 @@ public class FileController {
 	
 	@PostMapping("/question/add/{qid}")
     public UploadFileResponse uploadFile(@PathVariable String qid, @RequestParam("file") MultipartFile file) {
-        String fileName = fileStorageService.storeFile(file,qid);
-
+		String fileName = fileStorageService.storeFile(file,qid);
+        String md5 = "";
+		try {
+			MessageDigest md = MessageDigest.getInstance("MD5");
+//			DigestInputStream dis = new DigestInputStream(file.getInputStream(), md);
+			byte[] digest = md.digest(file.getBytes());
+			StringBuffer sb = new StringBuffer();
+			for (byte b : digest) {
+				sb.append(String.format("%02X", b));
+			}
+			md5 = sb.toString().toLowerCase();
+		} catch (NoSuchAlgorithmException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/question/video/")
                 .path(qid)
                 .toUriString();
 
         return new UploadFileResponse(fileName, fileDownloadUri,
-                file.getContentType(), file.getSize());
+                file.getContentType(),md5, file.getSize());
     }
 	
 	@GetMapping("/question/video/{qid}")//downloadFile/{fileName:.+}")
