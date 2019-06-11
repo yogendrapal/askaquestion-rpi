@@ -16,6 +16,13 @@ def sync2server():
 			vid_json = f[:f.index(".mp4")] + '.json'
 			postjson(vid_json,vid)
 			time.sleep(1)
+		if f.endswith(".avi"):
+			print('\n\n[INFO]: Syncing %s with server...'%f)
+			vid = f
+			vid_json = f[:f.index(".avi")] + '.json'
+			postjson(vid_json,vid)
+			time.sleep(1)
+
 
 def postjson(jsonfile,vidname):
 	# defining the api-endpoint  
