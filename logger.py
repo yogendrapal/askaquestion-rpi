@@ -31,7 +31,44 @@ def new_log_entry(filename):
 	jsonfile = filename + '.json'
 	vidname=filename+ '.mp4'
 	with open(OUTPUT_DIR+jsonfile,'w+') as outfile:
-		json.dump(ldb,outfile)
-	
-	
+		json.dump(ldb,outfile)	
 	return
+
+def json_post_success(vidname,id):
+	try:
+		with open(UNDER_PROCESS_JSON_PATH) as json_file:
+			json_data = json.load(json_file)
+	except:
+		json_data = {}
+	json_data[vidname] = id
+	with open(UNDER_PROCESS_JSON_PATH,'w+') as outfile:
+		json.dump(json_data,outfile)
+
+def video_post_success(vidname,id):
+	with open(UNDER_PROCESS_JSON_PATH) as json_file:
+		json_data = json.load(json_file)
+	del json_data[vidname]
+	with open(UNDER_PROCESS_JSON_PATH,'w+') as outfile:
+		json.dump(json_data,outfile)
+	try:
+		with open(VIDEO_SENT_JSON_PATH) as json_file:
+			json_data = json.load(json_file)
+	except:
+		json_data = []
+	new_entry = {'id':id}
+	json_data.append(new_entry)
+	with open(VIDEO_SENT_JSON_PATH,'w+') as outfile:
+		json.dump(json_data,outfile)		
+
+def check_json_post_status(vidname):
+	try:
+		with open(UNDER_PROCESS_JSON_PATH) as json_file:
+			json_data = json.load(json_file)
+	except:
+		return False
+	if vidname in json_data:
+		return json_data[vidname]
+	else:
+		return False
+
+
