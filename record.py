@@ -1,5 +1,6 @@
 import shlex
 from subprocess import Popen, DEVNULL, STDOUT
+from config import *
 
 '''
 final command sample
@@ -25,7 +26,10 @@ class AV_Recorder():
 		#video codec for v4l2
 		self.rec_video_vcodec = ' -vcodec libx264 -b:v 300k -r 30 -g 30'
 		#record video command
-		self.rec_video_cmd = self.rec_video_v4l2 + self.rec_video_acodec + self.rec_video_vcodec
+		if RECORD_VIDEO_ONLY:
+			self.rec_video_cmd = self.rec_video_v4l2 + self.rec_video_vcodec
+		else:
+			self.rec_video_cmd = self.rec_video_v4l2 + self.rec_video_acodec + self.rec_video_vcodec
 		#output filename
 		self.output_name = 'temp_output'
 		#Popen object will be stored in pff
@@ -34,12 +38,15 @@ class AV_Recorder():
 
 	def generate_cmd(self):
 		#final recording command for video and audio recording with ffmpeg
-		self.cmd = 'ffmpeg -y' + self.rec_audio_cmd + self.rec_video_cmd + ' ' + self.output_name + '.mp4'
+		if RECORD_VIDEO_ONLY:
+			self.cmd = 'ffmpeg -y' + self.rec_video_cmd + ' ' + self.output_name + '.mp4'
+		else:
+			self.cmd = 'ffmpeg -y' + self.rec_audio_cmd + self.rec_video_cmd + ' ' + self.output_name + '.mp4'
 
 	def record(self,filename):
 		self.output_name = filename
 		self.generate_cmd()
-		print(self.cmd)
+		print('\n--ffmpeg command--\n',self.cmd,'\n')
 		self.pff = Popen(shlex.split(self.cmd), stdin = DEVNULL, stdout = DEVNULL, stderr = STDOUT)
 		print('recording started...')
 
