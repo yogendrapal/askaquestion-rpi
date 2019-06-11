@@ -15,6 +15,10 @@ class AV_Recorder():
 		
 		self.video_device = 0
 		self.num_audio_channels = 1
+		if LOW_SETTING:
+			self.ext = '.avi'
+		else
+			self.ext = '.mp4'
 
 		self.cmd = 'ffmpeg'
 		#record audio using alsa, use the default recording device
@@ -24,7 +28,10 @@ class AV_Recorder():
 		#audio codec for v4l2 (codec is aac, bitrate is 64k)
 		self.rec_video_acodec = ' -acodec aac -strict -2 -ac %d -b:a 64k' % self.num_audio_channels
 		#video codec for v4l2
-		self.rec_video_vcodec = ' -vcodec libx264 -b:v 300k -r 30 -g 30'
+		if LOW_SETTING:
+			self.rec_video_vcodec = '-r 25 -s 640x480'
+		else:
+			self.rec_video_vcodec = ' -vcodec libx264 -b:v 300k -r 30 -g 30'
 		#record video command
 		if RECORD_VIDEO_ONLY:
 			self.rec_video_cmd = self.rec_video_v4l2 + self.rec_video_vcodec
@@ -39,9 +46,9 @@ class AV_Recorder():
 	def generate_cmd(self):
 		#final recording command for video and audio recording with ffmpeg
 		if RECORD_VIDEO_ONLY:
-			self.cmd = 'ffmpeg -y' + self.rec_video_cmd + ' ' + self.output_name + '.mp4'
+			self.cmd = 'ffmpeg -y' + self.rec_video_cmd + ' ' + self.output_name + self.ext
 		else:
-			self.cmd = 'ffmpeg -y' + self.rec_audio_cmd + self.rec_video_cmd + ' ' + self.output_name + '.mp4'
+			self.cmd = 'ffmpeg -y' + self.rec_audio_cmd + self.rec_video_cmd + ' ' + self.output_name + self.ext
 
 	def record(self,filename):
 		self.output_name = filename
