@@ -48,7 +48,10 @@ def postjson(jsonfile,vidname):
 		print("\n[INFO]: response:")
 		response_json = json.loads(response.text)
 		pprint.pprint(response_json)
-		if "fileDownloadUri" in response_json:
+		print('\n--MD5--')
+		print('Actual MD5:\t' + original_hash)
+		print('Response MD5:\t' + response_json['md5']+'\n')
+		if "fileDownloadUri" in response_json and response_json['md5'] == original_hash:
 			#video upload was successful, now video and json can now be deleted
 			os.system('rm -f %s%s'%(OUTPUT_DIR,jsonfile))
 			os.system('rm -f %s%s'%(OUTPUT_DIR,vidname))

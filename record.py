@@ -1,6 +1,13 @@
 import shlex
 from subprocess import Popen, DEVNULL, STDOUT
 
+'''
+final command sample
+
+ffmpeg -y -f alsa -i default -f v4l2 -i /dev/video0 -acodec aac -strict -2 -ac 1 -b:a 64k -vcodec libx264 -b:v 300k -r 30 -g 30 output/vid838.mp4
+
+'''
+
 class AV_Recorder():
 
 	def __init__(self):
@@ -32,6 +39,7 @@ class AV_Recorder():
 	def record(self,filename):
 		self.output_name = filename
 		self.generate_cmd()
+		print(self.cmd)
 		self.pff = Popen(shlex.split(self.cmd), stdin = DEVNULL, stdout = DEVNULL, stderr = STDOUT)
 		print('recording started...')
 
