@@ -17,7 +17,7 @@ class AV_Recorder():
 		self.num_audio_channels = 1
 		if LOW_SETTING:
 			self.ext = '.avi'
-		else
+		else:
 			self.ext = '.mp4'
 
 		self.cmd = 'ffmpeg'
