@@ -7,7 +7,7 @@ import os
 import pprint
 import hashlib
 from config import *
-from logger import json_post_success,video_post_success,check_json_post_status
+from logger import json_post_success,video_post_success,check_json_post_status,get_posted_qids
 
 def sync2server():
 	for f in os.listdir(OUTPUT_DIR):
@@ -50,8 +50,8 @@ def postjson(jsonfile,vidname):
 	pprint.pprint(response_json)
 	if "uploadStatus" in response_json and response_json["uploadStatus"] == "Successful":
 		id = response_json['id']
-		json_post_success(vidname,id)
-		postvideo(jsonfile,vidname,id)
+		if json_post_success(vidname,id):
+			postvideo(jsonfile,vidname,id)
 	else:
 		print('[ERROR]: failed to post json for %s'%jsonfile)
 
@@ -68,12 +68,18 @@ def postvideo(jsonfile,vidname,id):
 	print('Response MD5:\t' + response_json['md5']+'\n')
 	if "fileDownloadUri" in response_json and response_json['md5'] == original_hash:
 		#video upload was successful, now video and json can now be deleted
-		os.system('rm -f %s%s'%(OUTPUT_DIR,jsonfile))
-		os.system('rm -f %s%s'%(OUTPUT_DIR,vidname))
-		video_post_success(vidname,id)
-		print('[INFO]: deleted %s and %s from local file system\n'%(jsonfile,vidname))
+		if video_post_success(vidname,id):
+			os.system('rm -f %s%s'%(OUTPUT_DIR,jsonfile))
+			os.system('rm -f %s%s'%(OUTPUT_DIR,vidname))
+			
+			print('[INFO]: deleted %s and %s from local file system\n'%(jsonfile,vidname))
 	else:
 		print('[ERROR]: failed to upload video for id %s'%id)
 
-   
+def fetch_posted_questions():
+	idlist = get_posted_qids()
+	print(idlist)
+	#now check each of the id on the server for answer
+	#for every available answer we will have to fetch the answer video
+	#then delete entry from video_sent table and add entry to answer_received table
    
