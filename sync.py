@@ -40,7 +40,7 @@ def postjson(jsonfile,vidname):
 	try:
 		r = requests.post(url = API_ENDPOINT, data=json_data1,headers=headers)
 	except:
-		print('[ERROR]: Unable to communicate with the server!')
+		print('[ERROR]: Unable to communicate with the server! Please ensure that HOST & PORT are properly configured in config.py.\n')
 		return
 
 	# extracting response text  
