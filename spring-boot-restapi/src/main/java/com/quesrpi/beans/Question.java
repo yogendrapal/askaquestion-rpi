@@ -12,17 +12,28 @@ public class Question {
 	String date;
 	String time;
 	String machine_id;
+	String vid_ext = "mp4";
 	
 	public Question() {
 		
 	}
 	
-	public Question(ObjectId _id, String date, String time, String machine_id) {
+	public Question(ObjectId _id, String date, String time, String machine_id, String vid_ext) {
 		this._id = _id;
 		this.date = date;
 		this.time = time;
 		this.machine_id = machine_id;
+		this.vid_ext = vid_ext;
 	}
+	
+	public String getVid_ext() {
+		return vid_ext;
+	}
+
+	public void setVid_ext(String vid_ext) {
+		this.vid_ext = vid_ext;
+	}
+
 	// ObjectId is converted to Hex string
 	public String get_id() {
 		return _id.toHexString();

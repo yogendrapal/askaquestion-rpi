@@ -8,11 +8,13 @@ public class Institution {
 	
 	String name;
 	String location;
+	String machine_id;
 	
-	public Institution(ObjectId _id, String name, String location) {
+	public Institution(ObjectId _id, String name, String location,String machine_id) {
 		this._id = _id;
 		this.name = name;
 		this.location = location;
+		this.machine_id = machine_id;
 	}
 	// ObjectId is converted to Hex string
 	public String get_id() {
@@ -35,6 +37,12 @@ public class Institution {
 	}
 	public void setLocation(String location) {
 		this.location = location;
+	}
+	public String getMachine_id() {
+		return machine_id;
+	}
+	public void setMachine_id(String machine_id) {
+		this.machine_id = machine_id;
 	}
 	
 	

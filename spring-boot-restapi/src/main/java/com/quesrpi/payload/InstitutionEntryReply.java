@@ -8,12 +8,15 @@ public class InstitutionEntryReply {
 	ObjectId _id;
 	String name;
 	String location;
+	String machine_id;
 	String uploadStatus;
+	
 	
 	public InstitutionEntryReply(Institution i,String status) {
 		_id = i.get_oid();
 		name=i.getName();
 		location=i.getLocation();
+		machine_id = i.getMachine_id();
 		uploadStatus= status;
 		
 	}
@@ -41,6 +44,14 @@ public class InstitutionEntryReply {
 	}
 	public void setUploadStatus(String uploadStatus) {
 		this.uploadStatus = uploadStatus;
+	}
+
+	public String getMachine_id() {
+		return machine_id;
+	}
+
+	public void setMachine_id(String machine_id) {
+		this.machine_id = machine_id;
 	}
 	
 	

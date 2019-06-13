@@ -1,11 +1,13 @@
 package com.quesrpi.controllers;
 
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +20,11 @@ import java.io.IOException;
 //import java.util.stream.Collectors;
 import java.math.BigInteger;
 
+import com.quesrpi.beans.Question;
 import com.quesrpi.payload.UploadFileResponse;
 import com.quesrpi.service.FileStorageService;
+import com.quesrpi.service.QuestionRepository;
+
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -28,6 +33,8 @@ import java.security.NoSuchAlgorithmException;
 public class FileController {
 	private static final Logger logger = LoggerFactory.getLogger(FileController.class);
 
+	@Autowired
+	private QuestionRepository repository;
 	
 	@Autowired
     private FileStorageService fileStorageService;
@@ -62,8 +69,18 @@ public class FileController {
 	
 	@GetMapping("/question/video/{qid}")//downloadFile/{fileName:.+}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String qid, HttpServletRequest request) {
-        // Load file as Resource
-        Resource resource = fileStorageService.loadFileAsResource(qid+".mp4");
+		Question record = null;
+		try {
+			record = repository.findBy_id(new ObjectId(qid));
+		}
+		catch(Exception e) {
+			return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);
+		}
+		if(record == null) {
+			return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);
+		}
+		// Load file as Resource
+        Resource resource = fileStorageService.loadFileAsResource(qid+"." + record.getVid_ext());
 
         // Try to determine file's content type
         String contentType = null;

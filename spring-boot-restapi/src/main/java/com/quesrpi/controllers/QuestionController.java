@@ -30,6 +30,7 @@ public class QuestionController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public Question getQuestionById(@PathVariable("id") ObjectId id) {
 	  return repository.findBy_id(id);
+	  
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
