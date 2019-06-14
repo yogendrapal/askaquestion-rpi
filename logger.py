@@ -148,17 +148,18 @@ def get_posted_qids():
 	return []
 
 
-def new_log_entry(filename):
+def new_log_entry(filename,ext ='mp4'):
 	now = datetime.now()
 	ldb = {}
 	ldb['name'] = filename
 	ldb['date'] = now.strftime("%d/%m/%y")
 	ldb['time'] = now.strftime("%H:%M:%S")
 	ldb['machine_id'] = MACHINE_ID
+	ldb['vid_ext'] = ext
 
 	#add the json extension
 	jsonfile = filename + '.json'
-	vidname=filename+ '.mp4'
+	vidname=filename+ '.' + ext
 	with open(OUTPUT_DIR+jsonfile,'w+') as outfile:
 		json.dump(ldb,outfile)	
 	return

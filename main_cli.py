@@ -9,8 +9,8 @@ import os
 avr = record.AV_Recorder()
 
 while True:
-	print('1. Start Recording')
-	print('2. Stop Recording')
+	print('1. Start / Stop Recording')
+	print('2. Cancel Recording')
 	print('3. Sync to Server')
 	print('4. ID-List of Sent Videos')
 	print('5. Clear Database')
@@ -18,13 +18,15 @@ while True:
 	ch = int(input())
 	
 	if ch == 1:
-		fname = 'vid' + str(random.randint(100,1001))
-		avr.record(OUTPUT_DIR+fname)
+		if avr.is_recording():
+			avr.stop()
+			logger.new_log_entry(fname,avr.ext)
+			print('Video was saved as "'+fname + '.' + avr.ext +'"\n')
+		else:
+			fname = 'vid' + str(random.randint(100,1001))
+			avr.record(OUTPUT_DIR+fname)
 	elif ch == 2:
-		avr.stop()
-		logger.new_log_entry(fname)
-		print('Video was saved as "'+fname + avr.ext +'"\nPress any key to continue')
-		input()
+		avr.discard()
 	elif ch == 3:
 		sync.sync2server()
 	elif ch == 4:

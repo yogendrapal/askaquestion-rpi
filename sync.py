@@ -56,7 +56,11 @@ def postjson(jsonfile,vidname):
 		print('[ERROR]: failed to post json for %s'%jsonfile)
 
 def postvideo(jsonfile,vidname,id):
-	files = {'file': ('%s.mp4'%id,open(OUTPUT_DIR+vidname, 'rb'),'video/mp4')}
+	try:
+		ext = vidname.split('.')[-1]
+	except:
+		ext = ''
+	files = {'file': ('%s.%s'%(id,ext),open(OUTPUT_DIR+vidname, 'rb'),'video/%s'%ext)}
 	original_hash = hashlib.md5(open(OUTPUT_DIR+vidname, 'rb').read()).hexdigest()
 	time.sleep(1)
 	response = requests.post("http://%s:%d/question/add/%s"%(API_HOST,API_PORT,id), files=files)
