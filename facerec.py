@@ -106,7 +106,7 @@ def remove_face_encodings(fid):
 '''
 This function runs the face recogntion and tries the match
 the face in front of the camera with the stored face encodings.
-if a match is found it returns the corresponding fid else it returns None
+if a match is found it returns the corresponding fids else it returns empty set
 '''
 def fetch_fid(video_device=0):
 	video_capture = cv2.VideoCapture(video_device)
@@ -124,15 +124,14 @@ def fetch_fid(video_device=0):
 		face_locations = face_recognition.face_locations(rgb_frame)
 		face_encodings = face_recognition.face_encodings(rgb_frame, face_locations)
 
-		res_fid = None
+		res_fid = set()
 		for enc in face_encodings:
 			matches = face_recognition.compare_faces(known_fencs, enc)
 
 			if True in matches:
-				res_fid = []
 				for m in range(len(matches)):
 					if matches[m]:
-						res_fid.append(known_fids[m])
+						res_fid.add(known_fids[m])
 				break
 		if res_fid:
 			break
