@@ -129,8 +129,10 @@ def fetch_fid(video_device=0):
 			matches = face_recognition.compare_faces(known_fencs, enc)
 
 			if True in matches:
-				first_match_idx = matches.index(True)
-				res_fid = known_fids[first_match_idx]
+				res_fid = []
+				for m in range(len(matches)):
+					if matches[m]:
+						res_fid.append(known_fids[m])
 				break
 		if res_fid:
 			break
