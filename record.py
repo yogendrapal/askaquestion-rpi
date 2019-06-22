@@ -2,6 +2,7 @@ import shlex
 from subprocess import Popen, DEVNULL, STDOUT
 import os
 from config import *
+import time
 
 '''
 final command sample
@@ -75,11 +76,18 @@ class AV_Recorder():
 		else:
 			self.cmd = 'ffmpeg -y' + self.rec_audio_cmd + self.rec_video_cmd + self.output_cmd
 
-	def record(self,filename):
+	def record(self,filename,retry=0):
+		if retry == 10:
+			print('Unable to start recording')
+			self.pff = None
 		self.output_name = filename
 		self.generate_cmd()
 		print('\n--ffmpeg command--\n',self.cmd,'\n')
 		self.pff = Popen(shlex.split(self.cmd), stdin = DEVNULL, stdout = DEVNULL, stderr = STDOUT)
+		time.sleep(2)
+		if self.pff.poll():
+			print('There was some problem starting the recording. Retrying...')
+			self.record(filename,retry=retry+1)
 		print('recording started...\n')
 
 	def stop(self):
