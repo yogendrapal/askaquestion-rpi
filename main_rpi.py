@@ -7,9 +7,11 @@ import sync
 import os
 
 avr = record.AV_Recorder()
+fname = ""
 
 def button1(channel):
 	global avr
+	global fname
 	print("Button on pin 12 was pushed!")
 	if avr.is_recording():
 		avr.stop()
