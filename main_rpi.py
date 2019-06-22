@@ -5,6 +5,7 @@ import record
 import random
 import sync
 import os
+import time
 
 avr = record.AV_Recorder()
 fname = ""
@@ -20,6 +21,7 @@ def button1(channel):
 	else:
 		fname = 'vid' + str(random.randint(100,1001))
 		avr.record(OUTPUT_DIR+fname)
+		time.sleep(3)
 
 def button2(channel):
 	global avr
