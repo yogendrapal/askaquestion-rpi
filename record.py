@@ -25,14 +25,21 @@ class AV_Recorder():
 
 		self.cmd = 'ffmpeg'
 		#record audio using alsa, use the default recording device
-		self.rec_audio_cmd = ' -f alsa -i default'
-		
-		self.rec_video_v4l2 = ' -f v4l2 -i /dev/video%d' % self.video_device
+		if RPI_CMD:
+			self.rec_audio_cmd = ' -f alsa -ac 1 -i hw:CARD=U0x46d0x825,DEV=0'
+		else:
+			self.rec_audio_cmd = ' -f alsa -i default'
+		if RPI_CMD:
+			self.rec_video_v4l2 = ' -f v4l2 -thread_queue_size 1024 -i /dev/video%d' % self.video_device
+		else:
+			self.rec_video_v4l2 = ' -f v4l2 -i /dev/video%d' % self.video_device
 		#audio codec for v4l2 (codec is aac, bitrate is 64k)
 		self.rec_video_acodec = ' -acodec aac -strict -2 -ac %d -b:a 64k' % self.num_audio_channels
 		#video codec for v4l2
 		if LOW_SETTING:
 			self.rec_video_vcodec = ' -r 25 -s 640x480 -qscale:v %d' % self.quality
+		elif RPI_CMD:
+			self.rec_video_vcodec = ' -acodec aac -strict -2 -ac 1 -b:a 32k -r 26 -s 320x240'
 		else:
 			self.rec_video_vcodec = ' -vcodec libx264 -b:v 300k -r 30 -g 30'
 		#record video command
@@ -42,7 +49,7 @@ class AV_Recorder():
 			self.rec_video_cmd = self.rec_video_v4l2 + self.rec_video_acodec + self.rec_video_vcodec
 		#output filename
 		self.output_name = 'temp_output'
-		self.output_cmd = ' -f tee "output.mp4|[f=nut]pipe:" | ffplay pipe:'
+		# self.output_cmd = ' -f tee "output.mp4|[f=nut]pipe:" | ffplay pipe:'
 		#Popen object will be stored in pff
 		self.pff = None
 		
@@ -60,6 +67,8 @@ class AV_Recorder():
 		self.generate_output_cmd()
 		if RECORD_VIDEO_ONLY:
 			self.cmd = 'ffmpeg -y' + self.rec_video_cmd + self.output_cmd
+		elif RPI_CMD:
+			self.cmd = 'ffmpeg -y -thread_queue_size 1024'
 		else:
 			self.cmd = 'ffmpeg -y' + self.rec_audio_cmd + self.rec_video_cmd + self.output_cmd
 
