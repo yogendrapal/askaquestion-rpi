@@ -18,7 +18,7 @@ class AV_Recorder():
 		self.num_audio_channels = 1
 		#only valid for LOW_SETTING mode
 		self.quality = 1 #1 for best, 31 for worst
-		if LOW_SETTING:
+		if LOW_SETTING or RPI_CMD:
 			self.ext = 'avi'
 		else:
 			self.ext = 'mp4'
@@ -34,12 +34,15 @@ class AV_Recorder():
 		else:
 			self.rec_video_v4l2 = ' -f v4l2 -i /dev/video%d' % self.video_device
 		#audio codec for v4l2 (codec is aac, bitrate is 64k)
-		self.rec_video_acodec = ' -acodec aac -strict -2 -ac %d -b:a 64k' % self.num_audio_channels
+		if RPI_CMD:
+			self.rec_video_acodec = ' -acodec aac -strict -2 -ac 1 -b:a 32k'
+		else:
+			self.rec_video_acodec = ' -acodec aac -strict -2 -ac %d -b:a 64k' % self.num_audio_channels
 		#video codec for v4l2
 		if LOW_SETTING:
 			self.rec_video_vcodec = ' -r 25 -s 640x480 -qscale:v %d' % self.quality
 		elif RPI_CMD:
-			self.rec_video_vcodec = ' -acodec aac -strict -2 -ac 1 -b:a 32k -r 26 -s 320x240'
+			self.rec_video_vcodec = ' -r 26 -s 320x240'
 		else:
 			self.rec_video_vcodec = ' -vcodec libx264 -b:v 300k -r 30 -g 30'
 		#record video command
