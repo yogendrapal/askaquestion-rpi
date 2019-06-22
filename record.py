@@ -68,7 +68,7 @@ class AV_Recorder():
 		if RECORD_VIDEO_ONLY:
 			self.cmd = 'ffmpeg -y' + self.rec_video_cmd + self.output_cmd
 		elif RPI_CMD:
-			self.cmd = 'ffmpeg -y -thread_queue_size 1024'
+			self.cmd = 'ffmpeg -y -thread_queue_size 1024' +self.rec_audio_cmd + self.rec_video_cmd + self.output_cmd
 		else:
 			self.cmd = 'ffmpeg -y' + self.rec_audio_cmd + self.rec_video_cmd + self.output_cmd
 
