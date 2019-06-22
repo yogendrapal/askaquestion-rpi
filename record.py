@@ -42,7 +42,7 @@ class AV_Recorder():
 		if LOW_SETTING:
 			self.rec_video_vcodec = ' -r 25 -s 640x480 -qscale:v %d' % self.quality
 		elif RPI_CMD:
-			self.rec_video_vcodec = ' -r 26 -s 320x240'
+			self.rec_video_vcodec = ' -r 15 -s 320x240'
 		else:
 			self.rec_video_vcodec = ' -vcodec libx264 -b:v 300k -r 30 -g 30'
 		#record video command
