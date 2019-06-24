@@ -51,6 +51,7 @@ while True:
 			print('No Match Found')
 	elif ch==6:
 		os.system('rm -f %s'%DB_PATH)
+		os.system('rm -f %s'%FACE_ENCS_NPZ_PATH)
 #--these are for testing purposes--
 	elif ch==91:
 		fe = facerec.generate_face_encodings()
@@ -61,6 +62,8 @@ while True:
 			print('Match Found: ',resfid)
 		else:
 			print('No Match Found')
+	elif ch==93:
+		print(logger.get_remote2local_dict())
 	else:
 		break
 
