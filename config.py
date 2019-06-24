@@ -1,10 +1,12 @@
 #Config file for settings
 
-MACHINE_ID = 'XYZ'
-API_HOST = '104.237.9.77'
+
+MACHINE_ID = 'AbC'
+API_HOST = '10.196.17.146'
 API_PORT = 8081
 OUTPUT_DIR = 'output/'
-RECORD_VIDEO_ONLY = True
+RECORD_VIDEO_ONLY = False
+RPI_CMD = True
 LOW_SETTING = False
 VIDEO_DEVICE = 0
 
