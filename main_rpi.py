@@ -78,8 +78,6 @@ time.sleep(1)
 
 while True: # Run forever
 	if GPIO.input(12) == 0:
-		global avr
-		global fname
 		print("Button on pin 12 was pushed!")
 		if avr.is_recording():
 			avr.stop()
@@ -91,13 +89,11 @@ while True: # Run forever
 		time.sleep(3)
 
 	if GPIO.input(16) == 0:
-		global avr
 		print("Button on pin 16 was pushed!")
 		avr.discard()
 		time.sleep(3)
 
 	if GPIO.input(18) == 0:
-		global avr
 		print("Button on pin 18 was pushed!")
 		sync.sync2server()
 		time.sleep(3)
