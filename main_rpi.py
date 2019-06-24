@@ -77,8 +77,8 @@ GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 time.sleep(1)
 
 while True: # Run forever
-    if GPIO.input(12) == 0:
-        global avr
+	if GPIO.input(12) == 0:
+		global avr
 		global fname
 		print("Button on pin 12 was pushed!")
 		if avr.is_recording():
