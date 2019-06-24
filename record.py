@@ -14,7 +14,7 @@ class AV_Recorder():
 
 	def __init__(self):
 		
-		self.video_device = 0
+		self.video_device = VIDEO_DEVICE
 		self.num_audio_channels = 1
 		if LOW_SETTING:
 			self.ext = 'avi'

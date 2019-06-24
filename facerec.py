@@ -10,7 +10,7 @@ This function will generate 2 face encodings for the person in
 front of the camera and will return it. If no face is found for
 100 frames, then None is returned.
 '''
-def generate_face_encodings(video_device=0):
+def generate_face_encodings(video_device=VIDEO_DEVICE):
 	video_capture = cv2.VideoCapture(video_device)
 
 	face_locations = []
@@ -80,6 +80,9 @@ def fetch_all_face_encodings():
 		fe_data = {}
 	fencs = []
 	fenc_ids = []
+	# print()
+	# print(fe_data)
+	# print()
 	for fid in fe_data:
 		fenc_ids.append(fid.split('_')[0])
 		fencs.append(fe_data[fid])
@@ -104,11 +107,11 @@ def remove_face_encodings(fid):
 
 
 '''
-This function runs the face recogntion and tries the match
+This function runs the face recogntion and tries to the match
 the face in front of the camera with the stored face encodings.
 if a match is found it returns the corresponding fids else it returns empty set
 '''
-def fetch_fid(video_device=0):
+def fetch_fid(video_device=VIDEO_DEVICE):
 	video_capture = cv2.VideoCapture(video_device)
 	known_fencs, known_fids = fetch_all_face_encodings()
 
@@ -122,11 +125,19 @@ def fetch_fid(video_device=0):
 		rgb_frame = frame[:, :, ::-1]
 
 		face_locations = face_recognition.face_locations(rgb_frame)
+		if len(face_locations) > 0:
+			print('[INFO]: detected %d face(s).\n'%len(face_locations))
 		face_encodings = face_recognition.face_encodings(rgb_frame, face_locations)
 
 		res_fid = set()
 		for enc in face_encodings:
-			matches = face_recognition.compare_faces(known_fencs, enc)
+			matches = face_recognition.compare_faces(known_fencs, enc,tolerance=FACE_DISTANCE_TOLERANCE)
+			# print(matches)
+			# face_distances = face_recognition.face_distance(known_fencs, enc)
+			# print(face_distances)
+			# best_match_index = np.argmin(face_distances)
+			# if matches[best_match_index]:
+			# 	name = known_fids[best_match_index]
 
 			if True in matches:
 				for m in range(len(matches)):
