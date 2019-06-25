@@ -19,7 +19,7 @@ class MyTkApp(threading.Thread):
 		self.root=Tk()
 		self.height=240
 		self.width=320
-		self.canvas = Canvas(root, width = width, height = height)  
+		self.canvas = Canvas(root, width = self.width, height = self.height)  
 		self.canvas.pack() 
 		img = Image.open("images/first.png")  # PIL solution
 		img = img.resize((self.width, self.height), Image.ANTIALIAS) #The (250, 250) is (height, width)
