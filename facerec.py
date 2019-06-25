@@ -11,7 +11,16 @@ front of the camera and will return it. If no face is found for
 100 frames, then None is returned.
 '''
 def generate_face_encodings(video_device=VIDEO_DEVICE):
-	video_capture = cv2.VideoCapture(video_device)
+	retry = 1
+	while retry < 10:
+		try:
+			if retry == 10:
+				return
+			video_capture = cv2.VideoCapture(video_device)
+		except:
+			time.sleep(3)
+			retry+=1
+
 	video_capture.set(cv2.CAP_PROP_FRAME_WIDTH,160)
 	video_capture.set(cv2.CAP_PROP_FRAME_HEIGHT,120)
 
@@ -116,7 +125,15 @@ the face in front of the camera with the stored face encodings.
 if a match is found it returns the corresponding fids else it returns empty set
 '''
 def fetch_fid(video_device=VIDEO_DEVICE):
-	video_capture = cv2.VideoCapture(video_device)
+	retry = 1
+	while retry < 10:
+		try:
+			if retry == 10:
+				return
+			video_capture = cv2.VideoCapture(video_device)
+		except:
+			time.sleep(3)
+			retry+=1
 	video_capture.set(cv2.CAP_PROP_FRAME_WIDTH,160)
 	video_capture.set(cv2.CAP_PROP_FRAME_HEIGHT,120)
 	known_fencs, known_fids = fetch_all_face_encodings()
