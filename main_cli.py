@@ -30,7 +30,6 @@ while True:
 		else:
 			#fname does not include the extension
 			fname = str(uuid.uuid4())
-			print('Please wait for the system to register your face...')
 			fe = facerec.generate_face_encodings()
 			if fe:
 				avr.record(OUTPUT_DIR+fname)

@@ -14,13 +14,14 @@ def generate_face_encodings(video_device=VIDEO_DEVICE):
 	retry = 1
 	while retry < 10:
 		try:
-			if retry == 10:
-				return
 			video_capture = cv2.VideoCapture(video_device)
+			print('Please wait for the system to register your face...')
+			break
 		except:
-			time.sleep(3)
+			time.sleep(2)
 			retry+=1
-
+	if(retry==10):
+		return
 	video_capture.set(cv2.CAP_PROP_FRAME_WIDTH,160)
 	video_capture.set(cv2.CAP_PROP_FRAME_HEIGHT,120)
 
