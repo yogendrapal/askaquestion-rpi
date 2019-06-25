@@ -15,7 +15,7 @@ root = None
 canvas = None
 
 class MyTkApp(threading.Thread):
-    def __init__(self):
+	def __init__(self):
 		self.root=Tk()
 		self.height=240
 		self.width=320
