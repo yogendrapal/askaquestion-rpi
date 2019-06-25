@@ -22,7 +22,7 @@ class MyTkApp(threading.Thread):
 		self.canvas = Canvas(root, width = width, height = height)  
 		self.canvas.pack() 
 		img = Image.open("images/first.png")  # PIL solution
-		img = img.resize((width, height), Image.ANTIALIAS) #The (250, 250) is (height, width)
+		img = img.resize((self.width, self.height), Image.ANTIALIAS) #The (250, 250) is (height, width)
 		img = ImageTk.PhotoImage(img) 
 		#img = ImageTk.PhotoImage(Image.open("Photo.jpg"))  
 		self.canvas.create_image(0, 0, anchor="nw", image=img)
@@ -30,7 +30,7 @@ class MyTkApp(threading.Thread):
 
 	def Rec_start():
 		img = Image.open("images/record3.png")  # PIL solution
-		img = img.resize((width, height), Image.ANTIALIAS) #The (250, 250) is (height, width)
+		img = img.resize((self.width, self.height), Image.ANTIALIAS) #The (250, 250) is (height, width)
 		img = ImageTk.PhotoImage(img) 
 		#img = ImageTk.PhotoImage(Image.open("record3.png"))  
 		self.canvas.create_image(0, 0, anchor="nw", image=img)
@@ -38,7 +38,7 @@ class MyTkApp(threading.Thread):
 
 	def Rec_stop():
 		img = Image.open("images/record1.png")  # PIL solution
-		img = img.resize((width, height), Image.ANTIALIAS) #The (250, 250) is (height, width)
+		img = img.resize((self.width, self.height), Image.ANTIALIAS) #The (250, 250) is (height, width)
 		img = ImageTk.PhotoImage(img) 
 		#img = ImageTk.PhotoImage(Image.open("record1.png"))  
 		self.canvas.create_image(0, 0, anchor="nw", image=img)
