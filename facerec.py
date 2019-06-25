@@ -134,7 +134,7 @@ def fetch_fid(video_device=VIDEO_DEVICE):
 		except:
 			time.sleep(2)
 			retry+=1
-	if(retry==10)
+	if(retry==10):
 		return
 	video_capture.set(cv2.CAP_PROP_FRAME_WIDTH,160)
 	video_capture.set(cv2.CAP_PROP_FRAME_HEIGHT,120)
