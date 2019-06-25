@@ -64,10 +64,13 @@ import random
 import sync
 import os
 import time
+import tt
+import tt4
 
 avr = record.AV_Recorder()
 fname = ""
 
+tt.first()
 GPIO.setwarnings(False) # Ignore warning for now
 GPIO.setmode(GPIO.BOARD) # Use physical pin numbering
 GPIO.setup(12, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Set pin 10 to be an input pin and set initial value to be pulled low (off)
@@ -82,20 +85,26 @@ while True: # Run forever
 		if avr.is_recording():
 			avr.stop()
 			logger.new_log_entry(fname,avr.ext)
-			print('Video was saved as "'+fname + '.' + avr.ext +'"\n')
+			tt4.stop()
+			#print('Video was saved as "'+fname + '.' + avr.ext +'"\n')
+
 		else:
+			
 			fname = 'vid' + str(random.randint(100,1001))
 			avr.record(OUTPUT_DIR+fname)
-		time.sleep(3)
+			tt4.stop()
+		#time.sleep(3)
 
 	if GPIO.input(16) == 0:
 		print("Button on pin 16 was pushed!")
 		avr.discard()
-		time.sleep(3)
+		tt4.stop()
+		#time.sleep(3)
 
 	if GPIO.input(18) == 0:
 		print("Button on pin 18 was pushed!")
 		sync.sync2server()
-		time.sleep(3)
+		tt4.stop()
+		#time.sleep(3)
 
 GPIO.cleanup()

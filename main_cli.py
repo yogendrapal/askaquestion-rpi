@@ -4,9 +4,12 @@ import record
 import random
 import sync
 import os
-
+import tt
+import tt4
 
 avr = record.AV_Recorder()
+
+tt.first()
 
 while True:
 	print('1. Start / Stop Recording')
@@ -25,6 +28,7 @@ while True:
 		else:
 			fname = 'vid' + str(random.randint(100,1001))
 			avr.record(OUTPUT_DIR+fname)
+			tt4.stop()
 	elif ch == 2:
 		avr.discard()
 	elif ch == 3:
