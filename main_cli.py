@@ -43,7 +43,6 @@ while True:
 	elif ch == 4:
 		sync.fetch_posted_questions()
 	elif ch == 5:
-		print('Please look into the camera...')
 		resfid = facerec.fetch_fid()
 		if resfid:
 			print('Match Found: ',resfid)
