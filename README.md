@@ -6,6 +6,7 @@ A hardware prototype based on Raspberry Pi to ask a question
 - FFMPEG
 - Python 3.x
 - Linux OS
+- Tkinter
 
 ## Requirements for Spring-Boot-RestAPI
 - Java JDK
