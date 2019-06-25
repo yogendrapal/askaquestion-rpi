@@ -8,6 +8,7 @@ import os
 import time
 from tkinter import *  
 from PIL import ImageTk,Image  
+import threading
 
 height=240
 width=320
@@ -39,7 +40,6 @@ def Rec_start():
 	img = ImageTk.PhotoImage(img) 
 	#img = ImageTk.PhotoImage(Image.open("record3.png"))  
 	canvas.create_image(0, 0, anchor="nw", image=img) 
-	root.mainloop() 
 
 def Rec_stop():
 	global height
@@ -50,8 +50,7 @@ def Rec_stop():
 	img = img.resize((width, height), Image.ANTIALIAS) #The (250, 250) is (height, width)
 	img = ImageTk.PhotoImage(img) 
 	#img = ImageTk.PhotoImage(Image.open("record1.png"))  
-	canvas.create_image(0, 0, anchor="nw", image=img) 
-	root.mainloop()  
+	canvas.create_image(0, 0, anchor="nw", image=img)  
 
 avr = record.AV_Recorder()
 fname = ""
@@ -66,7 +65,7 @@ GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 time.sleep(1)
 
 print('Program Started...')
-first()
+threading.Thread(target=first)
 while True: # Run forever
 	if GPIO.input(12) == 0:
 		print("Button on pin 12 was pushed!")
