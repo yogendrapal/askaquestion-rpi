@@ -51,13 +51,14 @@ class check_buttons(Thread):
 
 	def __init__(self,canvas):
 		Thread.__init__(self)
+		self.height=240
+		self.width=320
 		self.canvas = canvas
 		img = Image.open("images/first.png")  # PIL solution
 		img = img.resize((self.width, self.height), Image.ANTIALIAS) #The (250, 250) is (height, width)
 		img = ImageTk.PhotoImage(img)
 		self.img_on_canvas = self.canvas.create_image(0, 0, anchor="nw", image=img)
-		self.height=240
-		self.width=320
+
 		self.avr = record.AV_Recorder()
 		self.fname = ""
 		time.sleep(1)
