@@ -3,6 +3,7 @@ import cv2
 from config import *
 import json
 import numpy as np
+import time
 
 
 '''
@@ -13,13 +14,13 @@ front of the camera and will return it. If no face is found for
 def generate_face_encodings(video_device=VIDEO_DEVICE):
 	retry = 1
 	while retry < 10:
-		try:
-			video_capture = cv2.VideoCapture(video_device)
+		video_capture = cv2.VideoCapture()
+		if not video_capture.open(video_device):
+			time.sleep(2)
+			retry += 1
+		else:
 			print('Please wait for the system to register your face...')
 			break
-		except:
-			time.sleep(2)
-			retry+=1
 	if(retry==10):
 		return
 	video_capture.set(cv2.CAP_PROP_FRAME_WIDTH,160)
@@ -62,7 +63,7 @@ def generate_face_encodings(video_device=VIDEO_DEVICE):
 	# Release handle to the webcam
 	video_capture.release()
 	cv2.destroyAllWindows()
-	print('[INFO]: returning face encodings...\n')
+	print('[INFO]: Returning face encodings...\n')
 	return face_encodings
 
 '''
@@ -100,7 +101,7 @@ def fetch_all_face_encodings():
 		fenc_ids.append(fid.split('_')[0])
 		fencs.append(fe_data[fid])
 	return fencs,fenc_ids
-	print('[INFO]: fetched face encodings...\n')
+	print('[INFO]: Fetched face encodings...\n')
 
 '''
 This function removes all the face encodings corresponding to the
@@ -128,13 +129,13 @@ if a match is found it returns the corresponding fids else it returns empty set
 def fetch_fid(video_device=VIDEO_DEVICE):
 	retry = 1
 	while retry < 10:
-		try:
-			video_capture = cv2.VideoCapture(video_device)
+		video_capture = cv2.VideoCapture()
+		if not video_capture.open(video_device):
+			time.sleep(2)
+			retry += 1
+		else:
 			print('Please look into the camera...')
 			break
-		except:
-			time.sleep(2)
-			retry+=1
 	if(retry==10):
 		return
 	video_capture.set(cv2.CAP_PROP_FRAME_WIDTH,160)
@@ -152,7 +153,7 @@ def fetch_fid(video_device=VIDEO_DEVICE):
 
 		face_locations = face_recognition.face_locations(rgb_frame)
 		if len(face_locations) > 0:
-			print('[INFO]: detected %d face(s).\n'%len(face_locations))
+			print('[INFO]: Detected %d face(s).\n'%len(face_locations))
 		face_encodings = face_recognition.face_encodings(rgb_frame, face_locations)
 
 		res_fid = set()
