@@ -77,12 +77,15 @@ class check_buttons(Thread):
 					# self.set_image("images/record1.png")
 					logger.new_log_entry(self.fname,self.avr.ext)
 					print('Video was saved as "'+self.fname + '.' + self.avr.ext +'"\n')
+					time.sleep(3)
+					img = self.get_img("images/first.png")
+					self.canvas.itemconfig(self.img_on_canvas,image=img)
 				else:
 					self.fname = 'vid' + str(random.randint(100,1001))
 					self.avr.record(OUTPUT_DIR+self.fname)
 					img = self.get_img("images/record3.png")
 					self.canvas.itemconfig(self.img_on_canvas,image=img)
-				time.sleep(3)
+					time.sleep(3)
 
 			if GPIO.input(16) == 0:
 				print("Button on pin 16 was pushed!")
