@@ -59,11 +59,11 @@ class check_buttons(Thread):
 		self.fname = ""
 		time.sleep(1)
 
-	def set_image(self,img_path):
+	def get_img(self,img_path):
 		img = Image.open(img_path)  # PIL solution
 		img = img.resize((self.width, self.height), Image.ANTIALIAS) #The (250, 250) is (height, width)
 		img = ImageTk.PhotoImage(img)
-		self.canvas.itemconfig(self.img_on_canvas,image=img)
+		return img
 
 	def checkloop(self):
 		global root
@@ -72,13 +72,16 @@ class check_buttons(Thread):
 				print("Button on pin 18 was pushed!")
 				if self.avr.is_recording():
 					self.avr.stop()
-					self.set_image("images/record1.png")
+					img = self.get_img("images/record1.png")
+					self.canvas.itemconfig(self.img_on_canvas,image=img)
+					# self.set_image("images/record1.png")
 					logger.new_log_entry(self.fname,self.avr.ext)
 					print('Video was saved as "'+self.fname + '.' + self.avr.ext +'"\n')
 				else:
 					self.fname = 'vid' + str(random.randint(100,1001))
 					self.avr.record(OUTPUT_DIR+self.fname)
-					self.set_image("images/record3.png")
+					img = self.get_img("images/record3.png")
+					self.canvas.itemconfig(self.img_on_canvas,image=img)
 				time.sleep(3)
 
 			if GPIO.input(16) == 0:
