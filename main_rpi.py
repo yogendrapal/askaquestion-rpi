@@ -1,4 +1,3 @@
-
 from config import *
 if RPI:
 	import RPi.GPIO as GPIO # Import Raspberry Pi GPIO library
@@ -13,7 +12,8 @@ import time
 from tkinter import *  
 from PIL import ImageTk,Image  
 from threading import Thread
-
+import os
+import sys
 
 stop_thread = False
 height=240
@@ -90,12 +90,19 @@ class check_buttons(Thread):
 
 			if GPIO.input(16) == 0:
 				print("Button on pin 16 was pushed!")
-				self.avr.discard()
-				img = self.get_img("images/rec_discard.jpeg")
-				self.canvas.itemconfig(self.img_on_canvas,image=img)	
+				if self.avr.discard():
+					img = self.get_img("images/rec_discard.jpeg")
+					self.canvas.itemconfig(self.img_on_canvas,image=img)
+					time.sleep(3)
+				else:
+					time.sleep(1)
+					if GPIO.input(16) == 0:
+						os.execv(sys.executable, ['python3'] + sys.argv)	
 				# w2 = Tk()
 				# w2.mainloop()
-				time.sleep(3)
+				img = self.get_img("images/first.png")
+				self.canvas.itemconfig(self.img_on_canvas,image=img)
+
 
 			if GPIO.input(12) == 0:
 				print("Button on pin 12 was pushed!")

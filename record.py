@@ -103,5 +103,7 @@ class AV_Recorder():
 			os.system('rm -f %s'%(self.output_name + '.' + self.ext))
 			self.pff = None
 			print('recording discarded.\n')
+			return True
 		else:
 			print('No active recording!\n')
+			return False
