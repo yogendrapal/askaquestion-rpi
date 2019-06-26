@@ -14,7 +14,7 @@ def Rec_start():
 	canvas.create_image(0, 0, anchor="nw", image=img) 
 	root.mainloop()  
 
-def Rec_stop():
+'''def Rec_stop():
 	root = Tk()  
 	canvas = Canvas(root, width = width, height = height)  
 	canvas.pack() 
@@ -23,7 +23,7 @@ def Rec_stop():
 	img = ImageTk.PhotoImage(img) 
 	#img = ImageTk.PhotoImage(Image.open("record1.png"))  
 	canvas.create_image(0, 0, anchor="nw", image=img) 
-	root.mainloop()  
+	root.mainloop()'''  
 
 def Rec_retry():
 	root = Tk()  
