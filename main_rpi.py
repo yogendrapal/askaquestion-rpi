@@ -15,7 +15,7 @@ from PIL import ImageTk,Image
 from threading import Thread
 
 
-
+stop_thread = False
 height=240
 width=320
 root = None
@@ -67,7 +67,7 @@ class check_buttons(Thread):
 
 	def checkloop(self):
 		global root
-		while True:
+		while not stop_thread:
 			if GPIO.input(18) == 0:
 				print("Button on pin 18 was pushed!")
 				if self.avr.is_recording():
@@ -117,5 +117,6 @@ t1.start()
 
 updater()
 root.mainloop()
+stop_thread = True
 if RPI:
 	GPIO.cleanup()
