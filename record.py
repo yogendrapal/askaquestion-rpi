@@ -15,7 +15,7 @@ class AV_Recorder():
 
 	def __init__(self):
 		
-		self.video_device = VIDEO_DEVICE
+		self.video_device = 0
 		self.num_audio_channels = 1
 		#only valid for LOW_SETTING mode
 		self.quality = 1 #1 for best, 31 for worst
@@ -103,5 +103,7 @@ class AV_Recorder():
 			os.system('rm -f %s'%(self.output_name + '.' + self.ext))
 			self.pff = None
 			print('recording discarded.\n')
+			return True
 		else:
 			print('No active recording!\n')
+			return False
