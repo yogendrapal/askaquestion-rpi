@@ -14,6 +14,8 @@ def sync2server():
 		extns = [".mp4",".avi"]
 		for e in extns:
 			if f.endswith(e):
+				if f == e:
+					continue
 				print('\n\n[INFO]: Syncing %s with server...'%f)
 				vid = f
 				vid_json = f[:f.index(e)] + '.json'
