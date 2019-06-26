@@ -72,15 +72,16 @@ class check_buttons(Thread):
 				print("Button on pin 18 was pushed!")
 				if self.avr.is_recording():
 					self.avr.stop()
-					img = self.get_img("images/record1.png")
+					img = self.get_img("images/rec_stop.jpeg")
 					self.canvas.itemconfig(self.img_on_canvas,image=img)
-					# self.set_image("images/record1.png")
 					logger.new_log_entry(self.fname,self.avr.ext)
 					print('Video was saved as "'+self.fname + '.' + self.avr.ext +'"\n')
 					time.sleep(3)
 					img = self.get_img("images/first.png")
 					self.canvas.itemconfig(self.img_on_canvas,image=img)
 				else:
+					img = self.get_img("images/please_wait.jpeg")
+					self.canvas.itemconfig(self.img_on_canvas,image=img)
 					self.fname = 'vid' + str(random.randint(100,1001))
 					self.avr.record(OUTPUT_DIR+self.fname)
 					img = self.get_img("images/record3.png")
@@ -90,6 +91,10 @@ class check_buttons(Thread):
 			if GPIO.input(16) == 0:
 				print("Button on pin 16 was pushed!")
 				self.avr.discard()
+				img = self.get_img("images/rec_discard.jpeg")
+				self.canvas.itemconfig(self.img_on_canvas,image=img)	
+				# w2 = Tk()
+				# w2.mainloop()
 				time.sleep(3)
 
 			if GPIO.input(12) == 0:
@@ -119,9 +124,11 @@ t1.start()
 
 
 updater()
-root.attributes('-fullscreen', 'true')
+if RPI:
+	root.attributes('-fullscreen', 'true')
+	root.focus_force()
 root.geometry('320x240')
-root.focus_force()
+
 root.mainloop()
 stop_thread = True
 time.sleep(2)
