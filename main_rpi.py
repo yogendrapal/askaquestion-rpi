@@ -85,11 +85,13 @@ class check_buttons(Thread):
 						img = self.get_img("images/first.png")
 						self.canvas.itemconfig(self.img_on_canvas,image=img)
 					else:
-						img = self.get_img("images/please_wait.jpeg")
+						img = self.get_img("images/face_recog.jpeg")
 						self.canvas.itemconfig(self.img_on_canvas,image=img)
 						self.fname = str(shortuuid.uuid())
 						self.fe = facerec.generate_face_encodings()
 						if self.fe:
+							img = self.get_img("images/please_wait.jpeg")
+							self.canvas.itemconfig(self.img_on_canvas,image=img)
 							self.avr.record(OUTPUT_DIR+self.fname)
 							img = self.get_img("images/record3.png")
 							self.canvas.itemconfig(self.img_on_canvas,image=img)
@@ -118,12 +120,17 @@ class check_buttons(Thread):
 
 				if GPIO.input(12) == 0:
 					print("Button on pin 12 was pushed!")
+					img = self.get_img("images/please_look.jpeg")
+					self.canvas.itemconfig(self.img_on_canvas,image=img)
 					resfid = facerec.fetch_fid()
 					if resfid:
 						print('Match Found: ',resfid)
 					else:
 						print('No Match Found')
 					time.sleep(3)
+					img = self.get_img("images/first.png")
+					self.canvas.itemconfig(self.img_on_canvas,image=img)
+
 			except:
 				self.avr.discard()
 				os.system('pkill -9 ffmpeg')
