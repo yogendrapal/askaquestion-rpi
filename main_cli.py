@@ -4,12 +4,9 @@ import record
 import random
 import sync
 import os
-import tt
-import tt4
 
 avr = record.AV_Recorder()
 
-tt.first()
 
 while True:
 	print('1. Start / Stop Recording')
