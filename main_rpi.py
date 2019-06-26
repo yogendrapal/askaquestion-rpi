@@ -121,5 +121,6 @@ t1.start()
 updater()
 root.mainloop()
 stop_thread = True
+time.sleep(2)
 if RPI:
 	GPIO.cleanup()
