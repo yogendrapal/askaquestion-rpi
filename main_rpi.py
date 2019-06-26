@@ -1,4 +1,3 @@
-
 from config import *
 if RPI:
 	import RPi.GPIO as GPIO # Import Raspberry Pi GPIO library
@@ -13,7 +12,8 @@ import time
 from tkinter import *  
 from PIL import ImageTk,Image  
 from threading import Thread
-
+import os
+import sys
 
 stop_thread = False
 height=240
@@ -68,34 +68,51 @@ class check_buttons(Thread):
 	def checkloop(self):
 		global root
 		while not stop_thread:
-			if GPIO.input(18) == 0:
-				print("Button on pin 18 was pushed!")
-				if self.avr.is_recording():
-					self.avr.stop()
-					img = self.get_img("images/record1.png")
-					self.canvas.itemconfig(self.img_on_canvas,image=img)
-					# self.set_image("images/record1.png")
-					logger.new_log_entry(self.fname,self.avr.ext)
-					print('Video was saved as "'+self.fname + '.' + self.avr.ext +'"\n')
-					time.sleep(3)
+			try:
+				if GPIO.input(18) == 0:
+					print("Button on pin 18 was pushed!")
+					if self.avr.is_recording():
+						self.avr.stop()
+						img = self.get_img("images/rec_stop.jpeg")
+						self.canvas.itemconfig(self.img_on_canvas,image=img)
+						logger.new_log_entry(self.fname,self.avr.ext)
+						print('Video was saved as "'+self.fname + '.' + self.avr.ext +'"\n')
+						time.sleep(3)
+						img = self.get_img("images/first.png")
+						self.canvas.itemconfig(self.img_on_canvas,image=img)
+					else:
+						img = self.get_img("images/please_wait.jpeg")
+						self.canvas.itemconfig(self.img_on_canvas,image=img)
+						self.fname = 'vid' + str(random.randint(100,1001))
+						self.avr.record(OUTPUT_DIR+self.fname)
+						img = self.get_img("images/record3.png")
+						self.canvas.itemconfig(self.img_on_canvas,image=img)
+						time.sleep(3)
+
+				if GPIO.input(16) == 0:
+					print("Button on pin 16 was pushed!")
+					if self.avr.discard():
+						img = self.get_img("images/rec_discard.jpeg")
+						self.canvas.itemconfig(self.img_on_canvas,image=img)
+						time.sleep(3)
+					else:
+						time.sleep(1)
+						if GPIO.input(16) == 0:
+							os.execv(sys.executable, ['python3'] + sys.argv)	
+					# w2 = Tk()
+					# w2.mainloop()
 					img = self.get_img("images/first.png")
 					self.canvas.itemconfig(self.img_on_canvas,image=img)
-				else:
-					self.fname = 'vid' + str(random.randint(100,1001))
-					self.avr.record(OUTPUT_DIR+self.fname)
-					img = self.get_img("images/record3.png")
-					self.canvas.itemconfig(self.img_on_canvas,image=img)
+
+
+				if GPIO.input(12) == 0:
+					print("Button on pin 12 was pushed!")
+					sync.sync2server()
 					time.sleep(3)
-
-			if GPIO.input(16) == 0:
-				print("Button on pin 16 was pushed!")
+			except:
 				self.avr.discard()
-				time.sleep(3)
-
-			if GPIO.input(12) == 0:
-				print("Button on pin 12 was pushed!")
-				sync.sync2server()
-				time.sleep(3)
+				os.system('pkill -9 ffmpeg')
+				os.execv(sys.executable, ['python3'] + sys.argv)
 
 def updater():
 	global root
@@ -119,9 +136,11 @@ t1.start()
 
 
 updater()
-root.attributes('-fullscreen', 'true')
+if RPI:
+	root.attributes('-fullscreen', 'true')
+	root.focus_force()
 root.geometry('320x240')
-root.focus_force()
+
 root.mainloop()
 stop_thread = True
 time.sleep(2)
