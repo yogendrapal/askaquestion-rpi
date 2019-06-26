@@ -14,6 +14,8 @@ from PIL import ImageTk,Image
 from threading import Thread
 import os
 import sys
+import facerec
+import shortuuid
 
 stop_thread = False
 height=240
@@ -57,6 +59,7 @@ class check_buttons(Thread):
 
 		self.avr = record.AV_Recorder()
 		self.fname = ""
+		self.fe = None
 		time.sleep(1)
 
 	def get_img(self,img_path):
@@ -76,6 +79,7 @@ class check_buttons(Thread):
 						img = self.get_img("images/rec_stop.jpeg")
 						self.canvas.itemconfig(self.img_on_canvas,image=img)
 						logger.new_log_entry(self.fname,self.avr.ext)
+						facerec.store_face_encodings(self.fe, self.fname)
 						print('Video was saved as "'+self.fname + '.' + self.avr.ext +'"\n')
 						time.sleep(3)
 						img = self.get_img("images/first.png")
@@ -83,10 +87,15 @@ class check_buttons(Thread):
 					else:
 						img = self.get_img("images/please_wait.jpeg")
 						self.canvas.itemconfig(self.img_on_canvas,image=img)
-						self.fname = 'vid' + str(random.randint(100,1001))
-						self.avr.record(OUTPUT_DIR+self.fname)
-						img = self.get_img("images/record3.png")
-						self.canvas.itemconfig(self.img_on_canvas,image=img)
+						self.fname = str(shortuuid.uuid())
+						self.fe = facerec.generate_face_encodings()
+						if self.fe:
+							self.avr.record(OUTPUT_DIR+self.fname)
+							img = self.get_img("images/record3.png")
+							self.canvas.itemconfig(self.img_on_canvas,image=img)
+						else:
+							img = self.get_img("images/rec_discard.jpeg")
+							self.canvas.itemconfig(self.img_on_canvas,image=img)
 						time.sleep(3)
 
 				if GPIO.input(16) == 0:
@@ -96,9 +105,11 @@ class check_buttons(Thread):
 						self.canvas.itemconfig(self.img_on_canvas,image=img)
 						time.sleep(3)
 					else:
-						time.sleep(1)
+						time.sleep(2)
+						#it will sync to server if long pressed for 2 secs
 						if GPIO.input(16) == 0:
-							os.execv(sys.executable, ['python3'] + sys.argv)	
+							sync.sync2server()
+							# os.execv(sys.executable, ['python3'] + sys.argv)	
 					# w2 = Tk()
 					# w2.mainloop()
 					img = self.get_img("images/first.png")
@@ -107,7 +118,11 @@ class check_buttons(Thread):
 
 				if GPIO.input(12) == 0:
 					print("Button on pin 12 was pushed!")
-					sync.sync2server()
+					resfid = facerec.fetch_fid()
+					if resfid:
+						print('Match Found: ',resfid)
+					else:
+						print('No Match Found')
 					time.sleep(3)
 			except:
 				self.avr.discard()
