@@ -1,5 +1,9 @@
-import RPi.GPIO as GPIO # Import Raspberry Pi GPIO library
+
 from config import *
+if RPI:
+	import RPi.GPIO as GPIO # Import Raspberry Pi GPIO library
+else:
+	import keyboard
 import logger
 import record
 import random
@@ -10,16 +14,32 @@ from tkinter import *
 from PIL import ImageTk,Image  
 from threading import Thread
 
+
+
 height=240
 width=320
 root = None
 canvas = None
-GPIO.setwarnings(False) # Ignore warning for now
-GPIO.setmode(GPIO.BOARD) # Use physical pin numbering
-GPIO.setup(12, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Set pin 10 to be an input pin and set initial value to be pulled low (off)
-GPIO.setup(16, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
+if RPI:
+	GPIO.setwarnings(False) # Ignore warning for now
+	GPIO.setmode(GPIO.BOARD) # Use physical pin numbering
+	GPIO.setup(12, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Set pin 10 to be an input pin and set initial value to be pulled low (off)
+	GPIO.setup(16, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+	GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+else:
+	class emugpio():
+		def __init__(self):
+			pass
+		def input(self,pin):
+			if pin==18 and keyboard.is_pressed('1'):
+				return False
+			elif pin == 16 and keyboard.is_pressed('2'):
+				return False
+			elif pin == 12 and keyboard.is_pressed('3'):
+				return False
+			else:
+				return True
+	GPIO = emugpio()
 
 class check_buttons(Thread):
 
@@ -46,6 +66,7 @@ class check_buttons(Thread):
 		self.canvas.itemconfig(self.img_on_canvas,image=img)
 
 	def checkloop(self):
+		global root
 		while True:
 			if GPIO.input(18) == 0:
 				print("Button on pin 18 was pushed!")
@@ -56,7 +77,7 @@ class check_buttons(Thread):
 					print('Video was saved as "'+self.fname + '.' + self.avr.ext +'"\n')
 				else:
 					self.fname = 'vid' + str(random.randint(100,1001))
-					self.avr.record(OUTPUT_DIR+fname)
+					self.avr.record(OUTPUT_DIR+self.fname)
 					self.set_image("images/record3.png")
 				time.sleep(3)
 
@@ -93,6 +114,5 @@ t1.start()
 
 updater()
 root.mainloop()
-	
-
-GPIO.cleanup()
+if RPI:
+	GPIO.cleanup()
