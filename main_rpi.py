@@ -119,6 +119,10 @@ t1.start()
 
 
 updater()
+root.attributes('-type', 'dock')
+root.geometry('320x240')
+Entry(root).pack()
+root.focus_force()
 root.mainloop()
 stop_thread = True
 time.sleep(2)
