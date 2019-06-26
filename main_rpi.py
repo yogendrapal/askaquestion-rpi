@@ -110,6 +110,8 @@ class check_buttons(Thread):
 					sync.sync2server()
 					time.sleep(3)
 			except:
+				self.avr.discard()
+				os.system('pkill -9 ffmpeg')
 				os.execv(sys.executable, ['python3'] + sys.argv)
 
 def updater():
