@@ -68,7 +68,7 @@ class tPlayer(Tk.Frame):
 def check_return_btn():
 	global vroot
 	if GPIO.input(12) == 0:
-		vroot.quit()
+		# vroot.quit()
 		vroot.destroy()
 		#code to exit this window and return to normal flow
 	vroot.after(10,check_return_btn)
@@ -171,14 +171,17 @@ class check_buttons(Thread):
 							player = tPlayer(vroot)
 							player.play(vpath)
 							check_return_btn()
+							if RPI:
+								vroot.attributes('-fullscreen', 'true')
+								vroot.focus_force()
 							vroot.mainloop()
 							vroot = None
-							first_time = False
 					else:
 						print('No Match Found')
-					time.sleep(3)
 					img = self.get_img("images/first.png")
 					self.canvas.itemconfig(self.img_on_canvas,image=img)
+					time.sleep(3)
+					
 
 			except Exception as e:
 				print(e)
