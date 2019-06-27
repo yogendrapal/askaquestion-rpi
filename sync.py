@@ -73,6 +73,9 @@ def postvideo(jsonfile,vidname,id):
 	if "fileDownloadUri" in response_json and response_json['md5'] == original_hash:
 		#video upload was successful, now video and json can now be deleted
 		if video_post_success(vidname,id):
+			#below line is added temporarily to play the question video as the answer
+			os.system('cp -f %s%s %s%s'%(OUTPUT_DIR,vidname,ANSWER_DIR,vidname))
+			#remove the above line after the answer fetching mechanism is built
 			os.system('rm -f %s%s'%(OUTPUT_DIR,jsonfile))
 			os.system('rm -f %s%s'%(OUTPUT_DIR,vidname))
 			

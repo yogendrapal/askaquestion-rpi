@@ -143,6 +143,7 @@ def fetch_fid(video_device=VIDEO_DEVICE):
 	known_fencs, known_fids = fetch_all_face_encodings()
 
 	frame_count = 0
+	found_count = 0
 
 	while True:
 		# Grab a single frame of video
@@ -153,6 +154,7 @@ def fetch_fid(video_device=VIDEO_DEVICE):
 
 		face_locations = face_recognition.face_locations(rgb_frame)
 		if len(face_locations) > 0:
+			found_count += 1
 			print('[INFO]: Detected %d face(s).\n'%len(face_locations))
 		face_encodings = face_recognition.face_encodings(rgb_frame, face_locations)
 
@@ -172,6 +174,9 @@ def fetch_fid(video_device=VIDEO_DEVICE):
 						res_fid.add(known_fids[m])
 				break
 		if res_fid:
+			print('got matching face encodings')
+			break
+		elif found_count == 3:
 			break
 
 		if frame_count > MAX_FRAME_COUNT:

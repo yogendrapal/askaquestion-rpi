@@ -9,19 +9,22 @@ import random
 import sync
 import os
 import time
-from tkinter import *  
+import tkinter as Tk
+from tkinter import ttk  
 from PIL import ImageTk,Image  
 from threading import Thread
 import os
 import sys
 import facerec
 import shortuuid
+import vlc
 
 stop_thread = False
 height=240
 width=320
 root = None
 canvas = None
+vroot= None
 if RPI:
 	GPIO.setwarnings(False) # Ignore warning for now
 	GPIO.setmode(GPIO.BOARD) # Use physical pin numbering
@@ -42,6 +45,33 @@ else:
 			else:
 				return True
 	GPIO = emugpio()
+
+class tPlayer(Tk.Frame):
+	def __init__(self,parent):
+		Tk.Frame.__init__(self,parent)
+		self.parent = parent
+		self.player = None
+		self.videopanel = ttk.Frame(self.parent)
+		self.canvas = Tk.Canvas(self.videopanel).pack(fill=Tk.BOTH)
+		self.videopanel.pack(fill=Tk.BOTH)
+		self.Instance = vlc.Instance()
+		self.player = self.Instance.media_player_new()		
+		
+
+	def play(self,vpath):
+		self.Media = self.Instance.media_new(vpath)
+		self.player.set_media(self.Media)
+		
+		self.player.set_xwindow(self.videopanel.winfo_id())
+		self.player.play()
+
+def check_return_btn():
+	global vroot
+	if GPIO.input(12) == 0:
+		vroot.quit()
+		vroot.destroy()
+		#code to exit this window and return to normal flow
+	vroot.after(10,check_return_btn)
 
 class check_buttons(Thread):
 
@@ -70,6 +100,7 @@ class check_buttons(Thread):
 
 	def checkloop(self):
 		global root
+		global vroot
 		while not stop_thread:
 			try:
 				if GPIO.input(18) == 0:
@@ -125,13 +156,32 @@ class check_buttons(Thread):
 					resfid = facerec.fetch_fid()
 					if resfid:
 						print('Match Found: ',resfid)
+						qid = ""
+						vpath = ""
+						for ans in resfid:
+							qid = ans
+							break
+						for ans in os.listdir(ANSWER_DIR):
+							if ans.startswith(qid):
+								vpath = ANSWER_DIR + ans
+								break
+						if vpath:
+							first_time = True
+							vroot = Tk.Tk()
+							player = tPlayer(vroot)
+							player.play(vpath)
+							check_return_btn()
+							vroot.mainloop()
+							vroot = None
+							first_time = False
 					else:
 						print('No Match Found')
 					time.sleep(3)
 					img = self.get_img("images/first.png")
 					self.canvas.itemconfig(self.img_on_canvas,image=img)
 
-			except:
+			except Exception as e:
+				print(e)
 				self.avr.discard()
 				os.system('pkill -9 ffmpeg')
 				os.execv(sys.executable, ['python3'] + sys.argv)
@@ -142,10 +192,10 @@ def updater():
 	root.after(10,updater)
 
 print('Program Started...')
-root = Tk()
+root = Tk.Tk()
 
 #set first image 
-canvas = Canvas(root, width = width, height = height)  
+canvas = Tk.Canvas(root, width = width, height = height)  
 canvas.pack() 
 img = Image.open("images/first.png")  # PIL solution
 img = img.resize((width, height), Image.ANTIALIAS) #The (250, 250) is (height, width)
