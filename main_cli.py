@@ -8,9 +8,9 @@ import facerec
 # import uuid
 import shortuuid
 
-
 avr = record.AV_Recorder()
 fe = None
+
 
 while True:
 	print('1. Start / Stop Recording')

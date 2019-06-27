@@ -10,9 +10,11 @@ A hardware prototype based on Raspberry Pi to ask a question
 - dlib
 - face_recognition
 - shortuuid
+- Tkinter
 
 For Installation instructions of dlib and face_recognition, refer,
 [https://github.com/ageitgey/face_recognition](https://github.com/ageitgey/face_recognition)
+
 
 ## Requirements for Spring-Boot-RestAPI
 - Java JDK

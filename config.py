@@ -14,7 +14,9 @@ if RPI:
 else:
 	RPI_CMD = False
 	LOW_SETTING = True
+
 VIDEO_DEVICE = 0
+
 
 DB_PATH = 'database.sqlite3'
 FACE_ENCS_NPZ_PATH = 'fenc.npz'
