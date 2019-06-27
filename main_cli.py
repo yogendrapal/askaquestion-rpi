@@ -5,7 +5,8 @@ import random
 import sync
 import os
 import facerec
-import uuid
+# import uuid
+import shortuuid
 
 
 avr = record.AV_Recorder()
@@ -29,7 +30,8 @@ while True:
 			print('Video was saved as "'+fname + '.' + avr.ext +'"\n')
 		else:
 			#fname does not include the extension
-			fname = str(uuid.uuid4())
+			# fname = str(uuid.uuid4())
+			fname = str(shortuuid.uuid())
 			fe = facerec.generate_face_encodings()
 			if fe:
 				avr.record(OUTPUT_DIR+fname)

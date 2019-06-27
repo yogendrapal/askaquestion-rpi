@@ -5,10 +5,18 @@ import com.quesrpi.exception.FileStorageException;
 import com.quesrpi.exception.MyFileNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.quesrpi.property.FileStorageProperties;
@@ -37,6 +45,26 @@ public class FileStorageService {
         }
     }
 	
+	public void sendVideo(String filename) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+		MultiValueMap<String, Object> body
+		  = new LinkedMultiValueMap<>();
+		Resource vidResource = loadFileAsResource(filename);
+		
+		body.add("video", vidResource);
+		body.add("id", 1);
+		
+		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+		 
+		String serverUrl = "http://10.196.13.169:3000/upload";
+		 
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<String> response  = restTemplate.postForEntity(serverUrl, requestEntity, String.class);
+		String responseBody = response.getBody();
+		System.out.println(responseBody);
+	}
+	
 	public String storeFile(MultipartFile file,String newFileName) {
         // Normalize file name
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
@@ -58,7 +86,13 @@ public class FileStorageService {
             // Copy file to the target location (Replacing existing file with the same name)
             Path targetLocation = this.fileStorageLocation.resolve(fileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-
+            try {
+            	sendVideo(fileName);
+            }
+            catch(Exception senderr) {
+            	System.out.println("Difficulty communicating with other server!");
+            }
+            
             return fileName;
         } catch (IOException ex) {
             throw new FileStorageException("Could not store file " + fileName + ". Please try again!", ex);
