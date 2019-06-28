@@ -28,20 +28,26 @@ import com.quesrpi.service.QuestionRepository;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-@ComponentScan({"com.quesrpi.service"})
-@RestController
-public class FileController {
-	private static final Logger logger = LoggerFactory.getLogger(FileController.class);
 
+@ComponentScan({"com.quesrpi.service"})
+
+@RestController
+//@RequestMapping("/answer")
+public class AnswerFileController {
+	private static final Logger logger = LoggerFactory.getLogger(AnswerFileController.class);
+	
 	@Autowired
 	private QuestionRepository repository;
 	
 	@Autowired
     private FileStorageService fileStorageService;
 	
-	@PostMapping("/question/add/{qid}")
+	@PostMapping("/answer/add/{qid}")
     public UploadFileResponse uploadFile(@PathVariable String qid, @RequestParam("file") MultipartFile file) {
-		String fileName = fileStorageService.storeFile(file,qid);
+		String fileName = fileStorageService.storeFile(file,qid,'a');
+		if(fileName == null) {
+			return new UploadFileResponse(-1);
+		}
         String md5 = "";
 		try {
 			MessageDigest md = MessageDigest.getInstance("MD5");
@@ -59,7 +65,7 @@ public class FileController {
         
         
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/question/video/")
+                .path("/answer/")
                 .path(qid)
                 .toUriString();
 
@@ -67,7 +73,7 @@ public class FileController {
                 file.getContentType(),md5, file.getSize());
     }
 	
-	@GetMapping("/question/video/{qid}")//downloadFile/{fileName:.+}")
+	@GetMapping("/answer/{qid}")//downloadFile/{fileName:.+}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String qid, HttpServletRequest request) {
 		Question record = null;
 		try {
