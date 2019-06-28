@@ -3,6 +3,7 @@
 try:
 	from authinfo import *
 except:
+	print('[ERROR]: Device Initialization is incomplete. Please run init.py')
 	MACHINE_ID = 'UNKNOWN'
 	INSTITUTE_ID = 'UNKNOWN'
 
