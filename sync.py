@@ -14,16 +14,25 @@ def sync2server():
 		extns = [".mp4",".avi"]
 		for e in extns:
 			if f.endswith(e):
+				if f == e:
+					continue
 				print('\n\n[INFO]: Syncing %s with server...'%f)
-				vid = f
-				vid_json = f[:f.index(e)] + '.json'
-				post_status = check_json_post_status(vid)
-				if post_status != False:
-					print('\n[INFO]: JSON already posted, id = %s' % post_status)
-					postvideo(vid_json,vid,post_status)
-				else:
-					postjson(vid_json,vid)
-				time.sleep(1)
+				try:
+					vid = f
+					vid_json = f[:f.index(e)] + '.json'
+					post_status = check_json_post_status(vid)
+					if post_status != False:
+						print('\n[INFO]: JSON already posted, id = %s' % post_status)
+						if not postvideo(vid_json,vid,post_status):
+							return False
+					else:
+						if not postjson(vid_json,vid):
+							return False
+					time.sleep(1)
+				except Exception as esync:
+					print(esync)
+					continue
+		return True
 
 
 def postjson(jsonfile,vidname):
@@ -41,7 +50,7 @@ def postjson(jsonfile,vidname):
 		r = requests.post(url = API_ENDPOINT, data=json_data1,headers=headers)
 	except:
 		print('[ERROR]: Unable to communicate with the server! Please ensure that HOST & PORT are properly configured in config.py.\n')
-		return
+		return False
 
 	# extracting response text  
 	response_text = r.text
@@ -51,9 +60,10 @@ def postjson(jsonfile,vidname):
 	if "uploadStatus" in response_json and response_json["uploadStatus"] == "Successful":
 		id = response_json['id']
 		if json_post_success(vidname,id):
-			postvideo(jsonfile,vidname,id)
+			return postvideo(jsonfile,vidname,id)
 	else:
 		print('[ERROR]: failed to post json for %s'%jsonfile)
+		return False
 
 def postvideo(jsonfile,vidname,id):
 	try:
@@ -80,8 +90,12 @@ def postvideo(jsonfile,vidname,id):
 			os.system('rm -f %s%s'%(OUTPUT_DIR,vidname))
 			
 			print('[INFO]: deleted %s and %s from local file system\n'%(jsonfile,vidname))
+			return True
+		else:
+			return False
 	else:
 		print('[ERROR]: failed to upload video for id %s'%id)
+		return False
 
 def fetch_posted_questions():
 	idlist = get_posted_qids()

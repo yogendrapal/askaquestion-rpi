@@ -141,7 +141,11 @@ class check_buttons(Thread):
 						time.sleep(2)
 						#it will sync to server if long pressed for 2 secs
 						if GPIO.input(16) == 0:
-							sync.sync2server()
+							img = self.get_img("images/syncing.jpeg")
+							self.canvas.itemconfig(self.img_on_canvas,image=img)
+							if not sync.sync2server():
+								print('display image here for failure!')
+								time.sleep(2)
 							# os.execv(sys.executable, ['python3'] + sys.argv)	
 					# w2 = Tk()
 					# w2.mainloop()
