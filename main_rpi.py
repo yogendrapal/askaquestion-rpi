@@ -145,7 +145,7 @@ class check_buttons(Thread):
 							self.canvas.itemconfig(self.img_on_canvas,image=img)
 							if not sync.sync2server():
 								print('display image here for failure!')
-								time.sleep(2)
+							time.sleep(2)
 							# os.execv(sys.executable, ['python3'] + sys.argv)	
 					# w2 = Tk()
 					# w2.mainloop()
