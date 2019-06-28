@@ -3,7 +3,6 @@ from datetime import datetime
 from config import *
 import sqlite3 as sql
 
-
 # log_db = {
 # 	'vidname':'temp.mp4',
 # 	'date':'',

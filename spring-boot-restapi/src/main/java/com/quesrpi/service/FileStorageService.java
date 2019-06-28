@@ -58,7 +58,7 @@ public class FileStorageService {
 	 */
 	public void sendVideo(String filename, Question q) {
 		
-		String serverUrl = "http://10.196.13.169:3000/upload";
+		String serverUrl = "http://192.168.43.244:8080/uploadDeviceQuestion";
 		
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
@@ -66,9 +66,9 @@ public class FileStorageService {
 		  = new LinkedMultiValueMap<>();
 		Resource vidResource = loadFileAsResource(filename);
 		
-		body.add("video", vidResource);
+		body.add("file", vidResource);
 		body.add("deviceId", q.getMachine_id());
-		body.add("questionId", q.get_id());
+		body.add("videoId", q.get_id());
 		body.add("instituteId", q.getInstituteId());
 		
 		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
@@ -114,6 +114,7 @@ public class FileStorageService {
             		sendVideo(fileName, record);
             }
             catch(Exception senderr) {
+            	System.out.println(senderr.toString());
             	System.out.println("Difficulty communicating with other server!");
             }
             

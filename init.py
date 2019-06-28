@@ -1,9 +1,11 @@
 import getpass
 import shortuuid
 import json
+import requests
+from requests_toolbelt.multipart.encoder import MultipartEncoder
 
-API_HOST = 'localhost'
-API_PORT = 1111
+API_HOST = '192.168.43.244'
+API_PORT = 8080
 
 while True:
 	print('Enter the device id (leave blank to auto generate device id): ',end="")
@@ -21,28 +23,32 @@ while True:
 		'deviceId':did
 	}
 
-	post_data = json.dumps(post_data)
-	post_json = json.loads(post_data)
+	m = MultipartEncoder(fields = post_data)
+	# post_data = json.dumps(post_data)
+	# post_json = json.loads(post_data)
 
 	#now try to connect with the app server
-	API_ENDPOINT = "http://%s:%d/register" %(API_HOST,API_PORT)
-	headers = {'Accept' : 'application/json', 'Content-Type' : 'application/json'}
+	API_ENDPOINT = "http://%s:%d/deviceReg" %(API_HOST,API_PORT)
+	# headers = {'Accept' : 'application/json', 'Content-Type' : 'multipart/form-data'}
 
 	try:
-		r = requests.post(url = API_ENDPOINT, data=post_json,headers=headers)
+		# r = requests.post(API_ENDPOINT,data = post_data,headers={'Content-Type': 'multipart/form-data'})
+		r = requests.post(API_ENDPOINT,data = m,headers={'Content-Type': m.content_type})#files=post_data, headers = headers)
 	except:
 		print('[ERROR]: Unable to communicate with the server! Please ensure that HOST & PORT are properly configured.\n')
 		continue
 
 	response_text = r.text
+	print(response_text)
 	response_json=json.loads(response_text)
 
 	iid = None
-	if 'insituteId' in response_json:
+	if 'Institute Id' in response_json:
 		print('Authentication Successful\n')
-		iid = response_json['insituteId']
+		iid = response_json['Institute Id']
 	else:
 		print("BAD email or password!\n")
+		continue
 
 	f = open('authinfo.py','w')
 	f.write('MACHINE_ID = "%s"\n'%(did))
