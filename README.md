@@ -12,6 +12,7 @@ A hardware prototype based on Raspberry Pi to ask a question
 - shortuuid
 - Tkinter
 - python-vlc
+- requests_toolbelt
 
 For Installation instructions of dlib and face_recognition, refer,
 [https://github.com/ageitgey/face_recognition](https://github.com/ageitgey/face_recognition)
