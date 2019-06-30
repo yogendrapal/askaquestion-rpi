@@ -195,8 +195,10 @@ class check_buttons(Thread):
 							vroot = None
 					else:
 						print('No Match Found')
-					img = self.get_img("images/first.png")
-					self.canvas.itemconfig(self.img_on_canvas,image=img)
+					'''img = self.get_img("images/first.png")
+					self.canvas.itemconfig(self.img_on_canvas,image=img)'''
+					frames = [Tk.PhotoImage(file='images/first.gif',format = 'gif -index %i' %(i)) for i in range(no_of_frames)]
+					self.update1(0)
 					time.sleep(3)
 					
 
