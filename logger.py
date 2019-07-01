@@ -3,7 +3,6 @@ from datetime import datetime
 from config import *
 import sqlite3 as sql
 
-
 # log_db = {
 # 	'vidname':'temp.mp4',
 # 	'date':'',
@@ -173,6 +172,7 @@ def new_log_entry(filename,ext ='mp4'):
 	ldb['time'] = now.strftime("%H:%M:%S")
 	ldb['machine_id'] = MACHINE_ID
 	ldb['vid_ext'] = ext
+	ldb['instituteId'] = INSTITUTE_ID
 
 	#add the json extension
 	jsonfile = filename + '.json'

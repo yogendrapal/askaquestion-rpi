@@ -32,7 +32,7 @@ def sync2server():
 				except Exception as esync:
 					print(esync)
 					continue
-		return True
+	return True
 
 
 def postjson(jsonfile,vidname):
