@@ -82,7 +82,7 @@ class check_buttons(Thread):
 		self.height=height
 		self.width=width
 		self.canvas = canvas
-		img = Image.open("images/first.png")  # PIL solution
+		img = Image.open("images/first.jpeg")  # PIL solution
 		img = img.resize((self.width, self.height), Image.ANTIALIAS) #The (250, 250) is (height, width)
 		img = ImageTk.PhotoImage(img)
 		self.img_on_canvas = self.canvas.create_image(0, 0, anchor="nw", image=img)
@@ -113,7 +113,7 @@ class check_buttons(Thread):
 						facerec.store_face_encodings(self.fe, self.fname)
 						print('Video was saved as "'+self.fname + '.' + self.avr.ext +'"\n')
 						time.sleep(3)
-						img = self.get_img("images/first.png")
+						img = self.get_img("images/first.jpeg")
 						self.canvas.itemconfig(self.img_on_canvas,image=img)
 					else:
 						img = self.get_img("images/face_recog.jpeg")
@@ -124,7 +124,7 @@ class check_buttons(Thread):
 							img = self.get_img("images/please_wait.jpeg")
 							self.canvas.itemconfig(self.img_on_canvas,image=img)
 							self.avr.record(OUTPUT_DIR+self.fname)
-							img = self.get_img("images/record3.png")
+							img = self.get_img("images/record3.jpeg")
 							self.canvas.itemconfig(self.img_on_canvas,image=img)
 						else:
 							img = self.get_img("images/rec_discard.jpeg")
@@ -149,7 +149,7 @@ class check_buttons(Thread):
 							# os.execv(sys.executable, ['python3'] + sys.argv)	
 					# w2 = Tk()
 					# w2.mainloop()
-					img = self.get_img("images/first.png")
+					img = self.get_img("images/first.jpeg")
 					self.canvas.itemconfig(self.img_on_canvas,image=img)
 
 
@@ -182,7 +182,7 @@ class check_buttons(Thread):
 							vroot = None
 					else:
 						print('No Match Found')
-					img = self.get_img("images/first.png")
+					img = self.get_img("images/first.jpeg")
 					self.canvas.itemconfig(self.img_on_canvas,image=img)
 					time.sleep(3)
 					
@@ -204,7 +204,7 @@ root = Tk.Tk()
 #set first image 
 canvas = Tk.Canvas(root, width = width, height = height)  
 canvas.pack() 
-img = Image.open("images/first.png")  # PIL solution
+img = Image.open("images/first.jpeg")  # PIL solution
 img = img.resize((width, height), Image.ANTIALIAS) #The (250, 250) is (height, width)
 img = ImageTk.PhotoImage(img) 
 canvas.create_image(0, 0, anchor="nw", image=img) 
