@@ -8,6 +8,7 @@ import facerec
 # import uuid
 import shortuuid
 
+
 avr = record.AV_Recorder()
 fe = None
 
