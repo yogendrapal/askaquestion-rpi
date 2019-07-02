@@ -86,7 +86,7 @@ public class AnswerFileController {
 			return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);
 		}
 		// Load file as Resource
-        Resource resource = fileStorageService.loadFileAsResource(qid+"." + record.getVid_ext());
+        Resource resource = fileStorageService.loadFileAsResource(qid,'a');
 
         // Try to determine file's content type
         String contentType = null;

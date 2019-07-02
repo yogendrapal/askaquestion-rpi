@@ -83,7 +83,7 @@ public class QuestionFileController {
 			return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);
 		}
 		// Load file as Resource
-        Resource resource = fileStorageService.loadFileAsResource(qid+"." + record.getVid_ext());
+        Resource resource = fileStorageService.loadFileAsResource(qid+"." + record.getVid_ext(),'q');
 
         // Try to determine file's content type
         String contentType = null;

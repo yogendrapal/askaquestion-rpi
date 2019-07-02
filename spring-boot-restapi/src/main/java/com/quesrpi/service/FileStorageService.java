@@ -64,7 +64,7 @@ public class FileStorageService {
 		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 		MultiValueMap<String, Object> body
 		  = new LinkedMultiValueMap<>();
-		Resource vidResource = loadFileAsResource(filename);
+		Resource vidResource = loadFileAsResource(filename,'q');
 		
 		body.add("file", vidResource);
 		body.add("deviceId", q.getMachine_id());
@@ -110,8 +110,8 @@ public class FileStorageService {
             	targetLocation = this.answerStorageLocation.resolve(fileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
             try {
-            	if(type == 'q')
-            		sendVideo(fileName, record);
+//            	if(type == 'q')
+//            		sendVideo(fileName, record);
             }
             catch(Exception senderr) {
             	System.out.println(senderr.toString());
@@ -124,10 +124,25 @@ public class FileStorageService {
         }
     }
 	
-	 public Resource loadFileAsResource(String fileName) {
+	 public Resource loadFileAsResource(String fileName, char type) {
 	        try {
-	            Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
-	            Resource resource = new UrlResource(filePath.toUri());
+	        	Path filePath;
+	        	Resource resource;
+	        	if(type == 'q') {
+	        		filePath = this.fileStorageLocation.resolve(fileName).normalize();
+	        		resource = new UrlResource(filePath.toUri());
+	        	}	
+	            else {
+	            	/*
+	            	 * THIS IS A TEMPORARY SOLUTION, THIS NEEDS TO BE CHANGED!
+	            	 */
+	            	filePath = this.answerStorageLocation.resolve(fileName+".mp4").normalize();
+	            	resource = new UrlResource(filePath.toUri());
+	            	if(!resource.exists()) {
+	            		filePath = this.answerStorageLocation.resolve(fileName+".avi").normalize();
+	            	}
+	            	resource = new UrlResource(filePath.toUri());
+	            }
 	            if(resource.exists()) {
 	                return resource;
 	            } else {
