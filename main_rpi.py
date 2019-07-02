@@ -9,17 +9,27 @@ import random
 import sync
 import os
 import time
-from tkinter import *  
-from PIL import ImageTk,Image  
+import tkinter as Tk
+from tkinter import ttk  
+from PIL import ImageTk,Image 
 from threading import Thread
 import os
 import sys
+import facerec
+import shortuuid
+import vlc
 
 stop_thread = False
 height=240
 width=320
 root = None
 canvas = None
+frames=[]
+no_of_frames=42
+vroot= None
+home = True
+homeidx = 0
+homecnt = 0
 if RPI:
 	GPIO.setwarnings(False) # Ignore warning for now
 	GPIO.setmode(GPIO.BOARD) # Use physical pin numbering
@@ -41,22 +51,55 @@ else:
 				return True
 	GPIO = emugpio()
 
-class check_buttons(Thread):
+def enableHome():
+	global home
+	global homeidx
+	global homecnt
+	homeidx = 0
+	homecnt = 0
+	home = True
 
-	def __init__(self,canvas):
+class tPlayer(Tk.Frame):
+	def __init__(self,parent):
+		Tk.Frame.__init__(self,parent)
+		self.parent = parent
+		self.player = None
+		self.videopanel = ttk.Frame(self.parent)
+		self.canvas = Tk.Canvas(self.videopanel).pack(fill=Tk.BOTH)
+		self.videopanel.pack(fill=Tk.BOTH)
+		self.Instance = vlc.Instance()
+		self.player = self.Instance.media_player_new()		
+		
+
+	def play(self,vpath):
+		self.Media = self.Instance.media_new(vpath)
+		self.player.set_media(self.Media)
+		
+		self.player.set_xwindow(self.videopanel.winfo_id())
+		self.player.play()
+
+def check_return_btn():
+	global vroot
+	if GPIO.input(12) == 0:
+		# vroot.quit()
+		vroot.destroy()
+		#code to exit this window and return to normal flow
+	vroot.after(10,check_return_btn)
+
+class check_buttons(Thread):
+	global root
+	global no_of_frames
+	global canvas	
+
+	def __init__(self):
 		global height
 		global width
 		Thread.__init__(self)
 		self.height=height
 		self.width=width
-		self.canvas = canvas
-		img = Image.open("images/first.png")  # PIL solution
-		img = img.resize((self.width, self.height), Image.ANTIALIAS) #The (250, 250) is (height, width)
-		img = ImageTk.PhotoImage(img)
-		self.img_on_canvas = self.canvas.create_image(0, 0, anchor="nw", image=img)
-
 		self.avr = record.AV_Recorder()
 		self.fname = ""
+		self.fe = None
 		time.sleep(1)
 
 	def get_img(self,img_path):
@@ -67,73 +110,145 @@ class check_buttons(Thread):
 
 	def checkloop(self):
 		global root
+		global frames
+		global vroot
+		global home
+		global canvas
 		while not stop_thread:
 			try:
 				if GPIO.input(18) == 0:
 					print("Button on pin 18 was pushed!")
+					home = False
 					if self.avr.is_recording():
 						self.avr.stop()
 						img = self.get_img("images/rec_stop.jpeg")
-						self.canvas.itemconfig(self.img_on_canvas,image=img)
+						canvas.itemconfig(canvas.create_image(0, 0, anchor="nw", image=img),image=img)
 						logger.new_log_entry(self.fname,self.avr.ext)
+						facerec.store_face_encodings(self.fe, self.fname)
 						print('Video was saved as "'+self.fname + '.' + self.avr.ext +'"\n')
-						time.sleep(3)
-						img = self.get_img("images/first.png")
-						self.canvas.itemconfig(self.img_on_canvas,image=img)
+						time.sleep(2)
+						enableHome()
 					else:
-						img = self.get_img("images/please_wait.jpeg")
-						self.canvas.itemconfig(self.img_on_canvas,image=img)
-						self.fname = 'vid' + str(random.randint(100,1001))
-						self.avr.record(OUTPUT_DIR+self.fname)
-						img = self.get_img("images/record3.png")
-						self.canvas.itemconfig(self.img_on_canvas,image=img)
-						time.sleep(3)
+						img = self.get_img("images/face_recog.jpeg")
+						canvas.itemconfig(canvas.create_image(0, 0, anchor="nw", image=img),image=img)
+						self.fname = str(shortuuid.uuid())
+						self.fe = facerec.generate_face_encodings()
+						if self.fe:
+							img = self.get_img("images/please_wait.jpeg")
+							canvas.itemconfig(canvas.create_image(0, 0, anchor="nw", image=img),image=img)
+							self.avr.record(OUTPUT_DIR+self.fname)
+							img = self.get_img("images/record3.jpeg")
+							canvas.itemconfig(canvas.create_image(0, 0, anchor="nw", image=img),image=img)
+							time.sleep(2)
+						else:
+							img = self.get_img("images/rec_discard.jpeg")
+							canvas.itemconfig(canvas.create_image(0, 0, anchor="nw", image=img),image=img)
+							time.sleep(2)
+							enableHome()
 
 				if GPIO.input(16) == 0:
 					print("Button on pin 16 was pushed!")
 					if self.avr.discard():
+						home = False
 						img = self.get_img("images/rec_discard.jpeg")
-						self.canvas.itemconfig(self.img_on_canvas,image=img)
+						canvas.itemconfig(canvas.create_image(0, 0, anchor="nw", image=img),image=img)
 						time.sleep(3)
 					else:
-						time.sleep(1)
+						time.sleep(2)
+						#it will sync to server if long pressed for 2 secs
 						if GPIO.input(16) == 0:
-							os.execv(sys.executable, ['python3'] + sys.argv)	
-					# w2 = Tk()
-					# w2.mainloop()
-					img = self.get_img("images/first.png")
-					self.canvas.itemconfig(self.img_on_canvas,image=img)
-
+							home = False
+							img = self.get_img("images/syncing.jpeg")
+							canvas.itemconfig(canvas.create_image(0, 0, anchor="nw", image=img),image=img)
+							if not sync.sync2server():
+								print('display image here for failure!')
+							time.sleep(2)
+					enableHome()
 
 				if GPIO.input(12) == 0:
 					print("Button on pin 12 was pushed!")
-					sync.sync2server()
-					time.sleep(3)
-			except:
+					if not self.avr.is_recording():
+						home = False
+						img = self.get_img("images/please_look.jpeg")
+						canvas.itemconfig(canvas.create_image(0, 0, anchor="nw", image=img),image=img)
+						resfid = facerec.fetch_fid()
+						if resfid:
+							print('Match Found: ',resfid)
+							qid = ""
+							vpath = ""
+							for ans in resfid:
+								qid = ans
+								break
+							for ans in os.listdir(ANSWER_DIR):
+								if ans.startswith(qid):
+									vpath = ANSWER_DIR + ans
+									break
+							if vpath:
+								first_time = True
+								vroot = Tk.Tk()
+								player = tPlayer(vroot)
+								player.play(vpath)
+								check_return_btn()
+								if RPI:
+									vroot.attributes('-fullscreen', 'true')
+									vroot.focus_force()
+								vroot.mainloop()
+								vroot = None
+						else:
+							print('No Match Found')
+						enableHome()
+						time.sleep(2)
+					
+			except Exception as e:
+				print(e)
 				self.avr.discard()
 				os.system('pkill -9 ffmpeg')
 				os.execv(sys.executable, ['python3'] + sys.argv)
+			
 
 def updater():
 	global root
+	global frames
+	global canvas
+	global homeidx
+	global home
+	global homecnt
+	if home:
+		if homeidx>=no_of_frames:
+			homeidx=0
+		frame = frames[homeidx]
+		if homeidx == 0:
+			if homecnt == 0:
+				canvas.itemconfig(canvas.create_image(0, 0, anchor="nw", image=frame),image=frame)
+			homecnt += 1
+			if(homecnt == 200):
+				homecnt = 0
+				homeidx += 1
+		elif homeidx in [20,40]:
+			if homecnt == 0:
+				canvas.itemconfig(canvas.create_image(0, 0, anchor="nw", image=frame),image=frame)
+			homecnt += 1
+			if(homecnt == 100):
+				homecnt = 0
+				homeidx += 1
+		else:
+			canvas.itemconfig(canvas.create_image(0, 0, anchor="nw", image=frame),image=frame)
+			homeidx += 1
 	root.update()
-	root.after(10,updater)
+	root.after(5,updater)
 
 print('Program Started...')
-root = Tk()
+root = Tk.Tk()
 
 #set first image 
-canvas = Canvas(root, width = width, height = height)  
+canvas = Tk.Canvas(root, width = width, height = height)  
 canvas.pack() 
-img = Image.open("images/first.png")  # PIL solution
-img = img.resize((width, height), Image.ANTIALIAS) #The (250, 250) is (height, width)
-img = ImageTk.PhotoImage(img) 
-canvas.create_image(0, 0, anchor="nw", image=img) 
 
-chk = check_buttons(canvas)
+frames = [Tk.PhotoImage(file='images/first.gif',format = 'gif -index %i' %(i)) for i in range(no_of_frames)] 
+
+chk = check_buttons()
 t1 = Thread(target=chk.checkloop)
 t1.start()
-
 
 updater()
 if RPI:

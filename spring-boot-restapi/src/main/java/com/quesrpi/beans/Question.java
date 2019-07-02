@@ -13,19 +13,29 @@ public class Question {
 	String time;
 	String machine_id;
 	String vid_ext = "mp4";
+	String instituteId;
 	
 	public Question() {
 		
 	}
 	
-	public Question(ObjectId _id, String date, String time, String machine_id, String vid_ext) {
+	public Question(ObjectId _id, String date, String time, String machine_id, String vid_ext, String insti) {
 		this._id = _id;
 		this.date = date;
 		this.time = time;
 		this.machine_id = machine_id;
 		this.vid_ext = vid_ext;
+		this.instituteId = insti;
 	}
 	
+	public String getInstituteId() {
+		return instituteId;
+	}
+
+	public void setInstituteId(String instituteId) {
+		this.instituteId = instituteId;
+	}
+
 	public String getVid_ext() {
 		return vid_ext;
 	}

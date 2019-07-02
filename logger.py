@@ -3,7 +3,6 @@ from datetime import datetime
 from config import *
 import sqlite3 as sql
 
-
 # log_db = {
 # 	'vidname':'temp.mp4',
 # 	'date':'',
@@ -45,7 +44,7 @@ def create_tables():
 		cur = con.cursor()
 		json_sent_table = """
 			CREATE TABLE json_sent (
-			vidname text PRIMARY KEY,
+			lid text PRIMARY KEY,
 			id text
 			)
 			"""
@@ -56,7 +55,8 @@ def create_tables():
 			print('Unable to create table!')
 		video_sent_table = """
 			CREATE TABLE video_sent (
-				id text PRIMARY KEY
+				lid text PRIMARY KEY,
+				id text
 				)
 			"""
 		try:
@@ -85,31 +85,33 @@ def check_tables():
 		return False
 
 
-json_sent_sql = "INSERT INTO json_sent (vidname,id) VALUES (?,?)"
-vid_sent_sql = "INSERT INTO video_sent (id) VALUES (?)"
-del_from_json_sent = "DELETE FROM json_sent where vidname = ?"
+json_sent_sql = "INSERT INTO json_sent (lid,id) VALUES (?,?)"
+vid_sent_sql = "INSERT INTO video_sent (lid,id) VALUES (?,?)"
+del_from_json_sent = "DELETE FROM json_sent where lid = ?"
 
 def check_json_post_status(vidname):
+	local_id = vidname.split('.')[0]
 	con = db_connect()
 	if con and check_tables():
 		cur = con.cursor()
-		cur.execute("SELECT vidname,id FROM json_sent")
+		cur.execute("SELECT lid,id FROM json_sent")
 		results = cur.fetchall()
-		for vname,id in results:
-			if vname == vidname:
+		for lid,id in results:
+			if lid == local_id:
 				return id
 		return False
 	else:
 		return False
 
 def json_post_success(vidname,id):
+	local_id = vidname.split('.')[0]
 	con = db_connect()
 	if con:
 		if not check_tables():
 			create_tables()
 		cur = con.cursor()
 		try:
-			cur.execute(json_sent_sql,(vidname,id))
+			cur.execute(json_sent_sql,(local_id,id))
 			con.commit()
 			return True
 		except:
@@ -118,14 +120,15 @@ def json_post_success(vidname,id):
 	return False
 
 def video_post_success(vidname,id):
+	local_id = vidname.split('.')[0]
 	con = db_connect()
 	if con:
 		if not check_tables():
 			create_tables()
 		cur = con.cursor()
 		try:
-			cur.execute(vid_sent_sql,(id,))
-			cur.execute(del_from_json_sent,(vidname,))
+			cur.execute(vid_sent_sql,(local_id,id))
+			cur.execute(del_from_json_sent,(local_id,))
 			con.commit()
 			return True
 		except:
@@ -147,6 +150,19 @@ def get_posted_qids():
 			print('[ERROR]: Problems fetching ids from video_sent table!')
 	return []
 
+def get_remote2local_dict():
+	con = db_connect()
+	if con and check_tables():
+		cur = con.cursor()
+		r2l = {}
+		try:
+			cur.execute("SELECT lid,id from video_sent")
+			results = cur.fetchall()
+			for r in results:
+				r2l[r[1]] = r[0]
+		except: 
+			print('[ERROR]: Problems fetching ids from video_sent table!')
+	return r2l
 
 def new_log_entry(filename,ext ='mp4'):
 	now = datetime.now()
@@ -156,6 +172,7 @@ def new_log_entry(filename,ext ='mp4'):
 	ldb['time'] = now.strftime("%H:%M:%S")
 	ldb['machine_id'] = MACHINE_ID
 	ldb['vid_ext'] = ext
+	ldb['instituteId'] = INSTITUTE_ID
 
 	#add the json extension
 	jsonfile = filename + '.json'

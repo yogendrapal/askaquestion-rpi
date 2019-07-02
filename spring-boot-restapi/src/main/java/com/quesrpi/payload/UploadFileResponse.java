@@ -6,6 +6,7 @@ public class UploadFileResponse {
     private String fileType;
     private String md5;
     private long size;
+    private String status;
 
     public UploadFileResponse(String fileName, String fileDownloadUri, String fileType, String md5, long size) {
         this.fileName = fileName;
@@ -13,7 +14,27 @@ public class UploadFileResponse {
         this.fileType = fileType;
         this.md5 = md5;
         this.size = size;
+        this.status = "Successful";
     }
+    
+    public UploadFileResponse(int code) {
+    	if(code == -1) {
+    		status = "No matching Question Id found";
+    	}
+    	this.fileName = "Error";
+        this.fileDownloadUri = "Error";
+        this.fileType = "Error";
+        this.md5 = "Error";
+        this.size = -1;
+    }
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
 	public String getMd5() {
 		return md5;
