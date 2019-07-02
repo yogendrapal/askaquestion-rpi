@@ -88,6 +88,7 @@ def check_tables():
 json_sent_sql = "INSERT INTO json_sent (lid,id) VALUES (?,?)"
 vid_sent_sql = "INSERT INTO video_sent (lid,id) VALUES (?,?)"
 del_from_json_sent = "DELETE FROM json_sent where lid = ?"
+del_from_vid_sent = "DELETE FROM video_sent where lid = ?"
 
 def check_json_post_status(vidname):
 	local_id = vidname.split('.')[0]
@@ -135,6 +136,22 @@ def video_post_success(vidname,id):
 			con.rollback()
 			print("[ERROR]: Cannot add entry to video_sent table!")
 	return False	
+
+def answer_get_success(lid):
+	con = db_connect()
+	if con:
+		if not check_tables():
+			create_tables()
+		cur = con.cursor()
+		try:
+			cur.execute(del_from_vid_sent,(lid,))
+			con.commit()
+			return True
+		except Exception as edelv:
+			print(edelv)
+			con.rollback()
+			print("[ERROR]: Cannot delete entry from video_sent table!")
+	return False
 
 def get_posted_qids():
 	con = db_connect()
