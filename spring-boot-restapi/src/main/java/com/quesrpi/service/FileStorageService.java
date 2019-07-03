@@ -58,12 +58,38 @@ public class FileStorageService {
 	 */
 	public void sendVideo(String filename, Question q) {
 		
-		String serverUrl = "http://192.168.43.244:8080/uploadDeviceQuestion";
+		String serverUrl = "http://192.168.43.244:3000/uploadDeviceQuestion";
 		
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 		MultiValueMap<String, Object> body
 		  = new LinkedMultiValueMap<>();
+		Process p;
+		if(filename.endsWith("avi")) {
+			/*
+			 * THE FILE NEEDS TO BE CONVERTED TO .MP4 AS THE ANDROID PLAYER
+			 * IS NOT SUPPORTING .AVI
+			 * This needs to be improved in the future
+			 */
+			String orig_path = this.fileStorageLocation.resolve(filename).toString();
+//			System.out.println(orig_path);
+			String dest_name = filename.substring(0,filename.lastIndexOf(".")) + ".mp4";
+			String dest_path = this.fileStorageLocation.resolve(dest_name).toString();
+//			System.out.println(dest_path);
+			String convcommand = "ffmpeg -y -i " + orig_path + " -c:v libx264 -crf 19 -preset slow -c:a aac -b:a 192k -ac 2 " + dest_path;
+			System.out.println(convcommand);
+			try {
+				p = Runtime.getRuntime().exec(convcommand);
+				p.waitFor();
+				System.out.println ("ffmpeg exit: " + p.exitValue());
+	            p.destroy();
+				filename = dest_name;
+			}
+			catch(Exception econv) {
+				System.out.println(econv.toString());
+			}
+		}
+		
 		Resource vidResource = loadFileAsResource(filename,'q');
 		
 		body.add("file", vidResource);
@@ -110,8 +136,8 @@ public class FileStorageService {
             	targetLocation = this.answerStorageLocation.resolve(fileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
             try {
-//            	if(type == 'q')
-//            		sendVideo(fileName, record);
+            	if(type == 'q')
+            		sendVideo(fileName, record);
             }
             catch(Exception senderr) {
             	System.out.println(senderr.toString());
