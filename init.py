@@ -5,7 +5,7 @@ import requests
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 API_HOST = '192.168.43.244'
-API_PORT = 8080
+API_PORT = 3000
 
 while True:
 	print('Enter the device id (leave blank to auto generate device id): ',end="")

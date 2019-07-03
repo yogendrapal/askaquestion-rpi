@@ -10,6 +10,7 @@ from config import *
 from logger import json_post_success,video_post_success,check_json_post_status,get_posted_qids, get_remote2local_dict, answer_get_success
 
 def sync2server():
+	fetch_posted_questions()
 	for f in os.listdir(OUTPUT_DIR):
 		extns = [".mp4",".avi"]
 		for e in extns:
@@ -32,7 +33,6 @@ def sync2server():
 				except Exception as esync:
 					print(esync)
 					continue
-	fetch_posted_questions()
 	return True
 
 

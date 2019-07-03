@@ -27,6 +27,7 @@ canvas = None
 frames=[]
 no_of_frames=42
 vroot= None
+iroot = None
 home = True
 homeidx = 0
 homecnt = 0
@@ -78,6 +79,7 @@ class tPlayer(Tk.Frame):
 		self.player.set_xwindow(self.videopanel.winfo_id())
 		self.player.play()
 
+
 def check_return_btn():
 	global vroot
 	if GPIO.input(12) == 0:
@@ -85,6 +87,8 @@ def check_return_btn():
 		vroot.destroy()
 		#code to exit this window and return to normal flow
 	vroot.after(10,check_return_btn)
+
+
 
 class check_buttons(Thread):
 	global root
@@ -112,6 +116,7 @@ class check_buttons(Thread):
 		global root
 		global frames
 		global vroot
+		global iroot
 		global home
 		global canvas
 		while not stop_thread:
@@ -157,6 +162,8 @@ class check_buttons(Thread):
 						time.sleep(2)
 						#it will sync to server if long pressed for 2 secs
 						if GPIO.input(16) == 0:
+							os.system("python3 deviceinfo.py")
+						else:
 							home = False
 							img = self.get_img("images/syncing.jpeg")
 							canvas.itemconfig(canvas.create_image(0, 0, anchor="nw", image=img),image=img)
@@ -184,7 +191,6 @@ class check_buttons(Thread):
 									vpath = ANSWER_DIR + ans
 									break
 							if vpath:
-								first_time = True
 								vroot = Tk.Tk()
 								player = tPlayer(vroot)
 								player.play(vpath)
@@ -213,6 +219,7 @@ def updater():
 	global homeidx
 	global home
 	global homecnt
+	global no_of_frames
 	if home:
 		if homeidx>=no_of_frames:
 			homeidx=0
@@ -238,6 +245,7 @@ def updater():
 	root.after(5,updater)
 
 print('Program Started...')
+
 root = Tk.Tk()
 
 #set first image 
@@ -255,6 +263,8 @@ if RPI:
 	root.attributes('-fullscreen', 'true')
 	root.focus_force()
 root.geometry('320x240')
+
+
 
 root.mainloop()
 stop_thread = True
