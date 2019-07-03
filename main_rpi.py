@@ -181,14 +181,13 @@ class check_buttons(Thread):
 						resfid = facerec.fetch_fid()
 						if resfid:
 							print('Match Found: ',resfid)
-							qid = ""
 							vpath = ""
-							for ans in resfid:
-								qid = ans
-								break
 							for ans in os.listdir(ANSWER_DIR):
-								if ans.startswith(qid):
-									vpath = ANSWER_DIR + ans
+								for qid in resfid:
+									if ans.startswith(qid):
+										vpath = ANSWER_DIR + ans
+										break
+								if vpath:
 									break
 							if vpath:
 								vroot = Tk.Tk()
