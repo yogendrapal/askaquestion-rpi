@@ -14,7 +14,10 @@ def getStorageLeft():
 	diskinfo_raw = subprocess.Popen("df -h", shell=True,stdout=subprocess.PIPE)
 	output = diskinfo_raw.communicate()[0].decode()
 	mount_usage = dict((fields[5], fields[3]) for fields in [line.split() for line in output.strip().split("\n")][1:])
-	return mount_usage['/home']
+	if RPI:
+		return mount_usage['/'] 
+	else:
+		return mount_usage['/home']
 
 def get_info():
 	ip = getMyIp()
