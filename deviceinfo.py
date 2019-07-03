@@ -68,7 +68,7 @@ def check_ireturn_btn(status):
 		iroot.destroy()
 		return
 		#code to exit this window and return to normal flow
-	iroot.after(4000,check_ireturn_btn,1)
+	iroot.after(5000,check_ireturn_btn,1)
 
 iroot = Tk.Tk()
 window = infoPanel(iroot)
