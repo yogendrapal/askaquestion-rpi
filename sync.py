@@ -109,6 +109,7 @@ def fetch_posted_questions():
 		lid = r2l[qid]
 		if not r.status_code == 404:
 			print("[INFO]: Saving answer video for local_qid = %s\n"%lid)
+			os.system("cd %s && rm -f %s*"%(ANSWER_DIR,lid))
 			open(ANSWER_DIR + lid,'wb').write(r.content)
 			answer_get_success(lid)
 
