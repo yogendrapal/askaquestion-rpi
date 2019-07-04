@@ -58,7 +58,7 @@ public class FileStorageService {
 	 */
 	public void sendVideo(String filename, Question q) {
 		
-		String serverUrl = "http://192.168.43.244:3000/uploadDeviceQuestion";
+		String serverUrl = "http://104.237.9.77:50000/uploadDeviceQuestion";
 		
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.MULTIPART_FORM_DATA);

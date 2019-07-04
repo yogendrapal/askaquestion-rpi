@@ -25,7 +25,7 @@ width=320
 root = None
 canvas = None
 frames=[]
-no_of_frames=42
+no_of_frames=31
 vroot= None
 iroot = None
 home = True
@@ -163,6 +163,7 @@ class check_buttons(Thread):
 						#it will sync to server if long pressed for 2 secs
 						if GPIO.input(16) == 0:
 							os.system("python3 deviceinfo.py")
+							time.sleep(5)
 						else:
 							home = False
 							img = self.get_img("images/syncing.jpeg")
@@ -230,7 +231,7 @@ def updater():
 			if(homecnt == 200):
 				homecnt = 0
 				homeidx += 1
-		elif homeidx in [20,40]:
+		elif homeidx in [10,20,30]:
 			if homecnt == 0:
 				canvas.itemconfig(canvas.create_image(0, 0, anchor="nw", image=frame),image=frame)
 			homecnt += 1

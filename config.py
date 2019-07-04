@@ -9,7 +9,7 @@ except:
 
 RPI = False
 
-API_HOST = 'localhost'
+API_HOST = '104.237.9.77'
 API_PORT = 8081
 OUTPUT_DIR = 'output/'
 ANSWER_DIR = 'answers/'
