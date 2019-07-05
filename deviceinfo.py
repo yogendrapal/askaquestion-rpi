@@ -5,7 +5,7 @@ from PIL import ImageTk,Image
 
 
 def getMyIp():
-	return subprocess.check_output(['hostname', '-I']).decode().strip()
+	return subprocess.check_output(['hostname', '-I']).decode().strip().split(' ')[0]
 
 def getMachineId():
 	return MACHINE_ID
