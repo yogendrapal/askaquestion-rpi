@@ -169,7 +169,16 @@ class check_buttons(Thread):
 							img = self.get_img("images/syncing.jpeg")
 							canvas.itemconfig(canvas.create_image(0, 0, anchor="nw", image=img),image=img)
 							if not sync.sync2server():
-								print('display image here for failure!')
+								home = False
+								img = self.get_img("images/Unable_sync.jpeg")
+								canvas.itemconfig(canvas.create_image(0, 0, anchor="nw", image=img),image=img)
+								time.sleep(2)
+								#print('display image here for failure!')
+							else:
+								home = False
+								img = self.get_img("images/sync_comp.jpeg")
+								canvas.itemconfig(canvas.create_image(0, 0, anchor="nw", image=img),image=img)
+								time.sleep(2)
 							time.sleep(2)
 					enableHome()
 
@@ -201,7 +210,11 @@ class check_buttons(Thread):
 								vroot.mainloop()
 								vroot = None
 						else:
-							print('No Match Found')
+							#print('No Match Found')
+							home = False
+							img = self.get_img("images/no_answer.jpeg")
+							canvas.itemconfig(canvas.create_image(0, 0, anchor="nw", image=img),image=img)
+							time.sleep(2)
 						enableHome()
 						time.sleep(2)
 					
