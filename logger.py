@@ -169,6 +169,7 @@ def get_posted_qids():
 
 def get_remote2local_dict():
 	con = db_connect()
+	r2l = {}
 	if con and check_tables():
 		cur = con.cursor()
 		r2l = {}
