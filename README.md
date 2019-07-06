@@ -26,7 +26,9 @@ For Installation instructions of dlib and face_recognition, refer,
 ## Usage - Command Line Operation
 Use the following command to run in the CLI mode,
 
-`python3 main_cli.py`
+```
+python3 main_cli.py
+```
 
 ## Usage - GUI Mode (on raspberry pi)
 When running on the raspberry pi, check that in `config.py`,
