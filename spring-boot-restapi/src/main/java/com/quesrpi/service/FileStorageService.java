@@ -81,7 +81,7 @@ public class FileStorageService {
 			try {
 				p = Runtime.getRuntime().exec(convcommand);
 				p.waitFor();
-				System.out.println ("ffmpeg exit: " + p.exitValue());
+				System.out.println ("ffmpeg exit (0 refers to success): " + p.exitValue());
 	            p.destroy();
 				filename = dest_name;
 			}
@@ -136,12 +136,12 @@ public class FileStorageService {
             	targetLocation = this.answerStorageLocation.resolve(fileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
             try {
-//            	if(type == 'q')
-//            		sendVideo(fileName, record);
+            	if(type == 'q')
+            		sendVideo(fileName, record);
             }
             catch(Exception senderr) {
+            	System.out.println("Difficulty communicating with other server!, Error Message:");
             	System.out.println(senderr.toString());
-            	System.out.println("Difficulty communicating with other server!");
             }
             
             return fileName;

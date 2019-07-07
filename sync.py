@@ -10,7 +10,11 @@ from config import *
 from logger import json_post_success,video_post_success,check_json_post_status,get_posted_qids, get_remote2local_dict, answer_get_success
 
 def sync2server():
-	fetch_posted_questions()
+	try:
+		if requests.head("http://%s:%d/"%(API_HOST,API_PORT),timeout=10).status_code != 200:
+			return False
+	except:
+		return False
 	for f in os.listdir(OUTPUT_DIR):
 		extns = [".mp4",".avi"]
 		for e in extns:
@@ -33,6 +37,7 @@ def sync2server():
 				except Exception as esync:
 					print(esync)
 					continue
+	fetch_posted_questions()
 	return True
 
 
@@ -104,15 +109,20 @@ def fetch_posted_questions():
 	print(idlist)
 	for qid in idlist:
 		API_ENDPOINT = "http://%s:%d/answer/%s" %(API_HOST,API_PORT,qid)
-		r = requests.get(API_ENDPOINT,allow_redirects=True)
-		# print(r)
-		lid = r2l[qid]
-		if not r.status_code == 404:
-			print("[INFO]: Saving answer video for local_qid = %s\n"%lid)
-			os.system("cd %s && rm -f %s*"%(ANSWER_DIR,lid))
-			open(ANSWER_DIR + lid,'wb').write(r.content)
-			answer_get_success(lid)
+		try:
+			if requests.head(API_ENDPOINT,timeout=10).status_code == 200:
+				r = requests.get(API_ENDPOINT,allow_redirects=True)
+				lid = r2l[qid]
+		
+				print("[INFO]: Saving answer video for local_qid = %s\n"%lid)
+				os.system("cd %s && rm -f %s*"%(ANSWER_DIR,lid))
+				open(ANSWER_DIR + lid,'wb').write(r.content)
+				answer_get_success(lid)
+			else:
+				continue
+		except:
+			break
 
-	#now check each of the id on the server for answer
-	#for every available answer we will have to fetch the answer video
-	#then delete entry from video_sent table and add entry to answer_received table
+	#(done) now check each of the id on the server for answer
+	#(done) for every available answer we will have to fetch the answer video
+	#(TODO in future) then delete entry from video_sent table and add entry to answer_received table
