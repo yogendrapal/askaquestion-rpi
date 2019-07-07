@@ -136,8 +136,8 @@ public class FileStorageService {
             	targetLocation = this.answerStorageLocation.resolve(fileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
             try {
-            	if(type == 'q')
-            		sendVideo(fileName, record);
+//            	if(type == 'q')
+//            		sendVideo(fileName, record);
             }
             catch(Exception senderr) {
             	System.out.println(senderr.toString());

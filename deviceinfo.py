@@ -31,7 +31,7 @@ class infoPanel(Tk.Frame):
 		self.parent = parent
 		self.ip,self.mid,self.ssd = get_info()
 		self.txt1 = Tk.Label(self.parent,text = "Machine ID",font = "Times 18 bold")
-		self.txt2 = Tk.Label(self.parent,text = self.mid,font = "Times 13")
+		self.txt2 = Tk.Label(self.parent,text = self.mid,font = "Times 12")
 		# print('got here!\n')
 		img = Image.open("images/machine.png")  # PIL solution
 		img = img.resize((80, 80), Image.ANTIALIAS)

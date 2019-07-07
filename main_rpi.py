@@ -242,7 +242,7 @@ def updater():
 			canvas.itemconfig(canvas.create_image(0, 0, anchor="nw", image=frame),image=frame)
 			homeidx += 1
 	root.update()
-	root.after(5,updater)
+	root.after(40,updater)
 
 print('Program Started...')
 
