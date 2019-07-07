@@ -172,13 +172,13 @@ class check_buttons(Thread):
 								home = False
 								img = self.get_img("images/Unable_sync.jpeg")
 								canvas.itemconfig(canvas.create_image(0, 0, anchor="nw", image=img),image=img)
-								time.sleep(2)
+								# time.sleep(2)
 								#print('display image here for failure!')
 							else:
 								home = False
 								img = self.get_img("images/sync_comp.jpeg")
 								canvas.itemconfig(canvas.create_image(0, 0, anchor="nw", image=img),image=img)
-								time.sleep(2)
+								# time.sleep(2)
 							time.sleep(2)
 					enableHome()
 
@@ -209,12 +209,13 @@ class check_buttons(Thread):
 									vroot.focus_force()
 								vroot.mainloop()
 								vroot = None
+							else:
+								home = False
+								img = self.get_img("images/no_answer.jpeg")
+								canvas.itemconfig(canvas.create_image(0, 0, anchor="nw", image=img),image=img)
+								time.sleep(2)
 						else:
-							#print('No Match Found')
-							home = False
-							img = self.get_img("images/no_answer.jpeg")
-							canvas.itemconfig(canvas.create_image(0, 0, anchor="nw", image=img),image=img)
-							time.sleep(2)
+							print('No Match Found')
 						enableHome()
 						time.sleep(2)
 					

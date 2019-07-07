@@ -84,7 +84,7 @@ class AV_Recorder():
 		self.generate_cmd()
 		
 		self.pff = Popen(shlex.split(self.cmd), stdin = DEVNULL, stdout = DEVNULL, stderr = STDOUT)
-		time.sleep(3)
+		time.sleep(1)
 		if self.pff.poll():
 			print('There was some problem starting the recording. Retrying...')
 			self.record(filename,retry=retry+1)
