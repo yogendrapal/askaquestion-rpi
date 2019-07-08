@@ -31,12 +31,12 @@ class AV_Recorder():
 		else:
 			self.rec_audio_cmd = ' -f alsa -i default'
 		if RPI_CMD:
-			self.rec_video_v4l2 = ' -f v4l2 -thread_queue_size 1024 -i /dev/video%d' % self.video_device
+			self.rec_video_v4l2 = ' -f v4l2 -thread_queue_size 4096 -i /dev/video%d' % self.video_device
 		else:
 			self.rec_video_v4l2 = ' -f v4l2 -i /dev/video%d' % self.video_device
 		#audio codec for v4l2 (codec is aac, bitrate is 64k)
 		if RPI_CMD:
-			self.rec_video_acodec = ' -acodec aac -strict -2 -ac 1 -b:a 32k'
+			self.rec_video_acodec = ' -acodec aac -ac 1 -b:a 16k'
 		else:
 			self.rec_video_acodec = ' -acodec aac -strict -2 -ac %d -b:a 64k' % self.num_audio_channels
 		#video codec for v4l2
@@ -72,7 +72,7 @@ class AV_Recorder():
 		if RECORD_VIDEO_ONLY:
 			self.cmd = 'ffmpeg -y' + self.rec_video_cmd + self.output_cmd
 		elif RPI_CMD:
-			self.cmd = 'ffmpeg -y -thread_queue_size 1024' +self.rec_audio_cmd + self.rec_video_cmd + self.output_cmd
+			self.cmd = 'ffmpeg -y -thread_queue_size 4096' +self.rec_audio_cmd + self.rec_video_cmd + self.output_cmd
 		else:
 			self.cmd = 'ffmpeg -y' + self.rec_audio_cmd + self.rec_video_cmd + self.output_cmd
 
