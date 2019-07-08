@@ -4,6 +4,7 @@ from config import *
 import json
 import numpy as np
 import time
+import logging
 
 
 '''
@@ -20,6 +21,7 @@ def generate_face_encodings(video_device=VIDEO_DEVICE):
 			retry += 1
 		else:
 			print('Please wait for the system to register your face...')
+			logging.info('Please wait for the system to register your face...')
 			break
 	if(retry==10):
 		return
@@ -60,10 +62,12 @@ def generate_face_encodings(video_device=VIDEO_DEVICE):
 		if cv2.waitKey(1) & 0xFF == ord('q'):
 			break
 	print('frame-count:',frame_count)
+	logging.info('frame-count: '+str(frame_count))
 	# Release handle to the webcam
 	video_capture.release()
 	cv2.destroyAllWindows()
 	print('[INFO]: Returning face encodings...\n')
+	logging.info('[INFO]: Returning face encodings...\n')
 	return face_encodings
 
 '''
@@ -80,6 +84,7 @@ def store_face_encodings(fencs, fid):
 		fe_data[fid+('_%d'%(i))] = fencs[i]
 	np.savez(FACE_ENCS_NPZ_PATH,**fe_data)
 	print('[INFO]: Saved face encodings...\n')
+	logging.info('[INFO]: Saved face encodings...\n')
 
 
 '''
@@ -102,6 +107,7 @@ def fetch_all_face_encodings():
 		fencs.append(fe_data[fid])
 	return fencs,fenc_ids
 	print('[INFO]: Fetched face encodings...\n')
+	logging.info('[INFO]: Fetched face encodings...\n')
 
 '''
 This function removes all the face encodings corresponding to the
@@ -135,6 +141,7 @@ def fetch_fid(video_device=VIDEO_DEVICE):
 			retry += 1
 		else:
 			print('Please look into the camera...')
+			logging.info('Please look into the camera...')
 			break
 	if(retry==10):
 		return
@@ -156,6 +163,7 @@ def fetch_fid(video_device=VIDEO_DEVICE):
 		if len(face_locations) > 0:
 			found_count += 1
 			print('[INFO]: Detected %d face(s).\n'%len(face_locations))
+			logging.info('[INFO]: Detected %d face(s).\n'%len(face_locations))
 		face_encodings = face_recognition.face_encodings(rgb_frame, face_locations)
 
 		res_fid = set()
@@ -175,6 +183,7 @@ def fetch_fid(video_device=VIDEO_DEVICE):
 				break
 		if res_fid:
 			print('got matching face encodings')
+			logging.info('got matching face encodings')
 			break
 		elif found_count == 3:
 			break

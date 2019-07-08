@@ -3,7 +3,7 @@ from subprocess import Popen, DEVNULL, STDOUT
 import os
 from config import *
 import time
-
+import logging
 '''
 final command sample
 
@@ -79,6 +79,7 @@ class AV_Recorder():
 	def record(self,filename,retry=0):
 		if retry == 10:
 			print('Unable to start recording')
+			logging.error('Unable to start recording')
 			self.pff = None
 		self.output_name = filename
 		self.generate_cmd()
@@ -90,12 +91,15 @@ class AV_Recorder():
 			self.record(filename,retry=retry+1)
 		else:
 			print('\n--ffmpeg command--\n',self.cmd,'\n')
+			logging.info('\n--ffmpeg command--\n'+ self.cmd+'\n')
 			print('recording started...\n')
+			logging.info('recording started...\n')
 
 	def stop(self):
 		self.pff.terminate()
 		self.pff = None
 		print('recording stopped.\n')
+		logging.info('recording stopped.\n')
 
 	def discard(self):
 		if self.pff:
@@ -103,7 +107,9 @@ class AV_Recorder():
 			os.system('rm -f %s'%(self.output_name + '.' + self.ext))
 			self.pff = None
 			print('recording discarded.\n')
+			logging.info('recording discarded.\n')
 			return True
 		else:
 			print('No active recording!\n')
+			logging.info('No active recording!\n')
 			return False

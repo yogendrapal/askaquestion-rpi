@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from config import *
 import sqlite3 as sql
-
+import logging
 # log_db = {
 # 	'vidname':'temp.mp4',
 # 	'date':'',
@@ -34,6 +34,7 @@ def db_connect(db_path = DB_PATH):
 			con = sql.connect(db_path)
 		except:
 			print('Unable to connect to the database! Please verify the DB_PATH in config.py')
+			logging.error('Unable to connect to the database! Please verify the DB_PATH in config.py')
 			return None
 		return con
 
@@ -51,8 +52,10 @@ def create_tables():
 		try:
 			cur.execute(json_sent_table)
 			print('json_sent table created successfully')
+			logging.info('json_sent table created successfully')
 		except:
 			print('Unable to create table!')
+			logging.error('Unable to create table!')
 		video_sent_table = """
 			CREATE TABLE video_sent (
 				lid text PRIMARY KEY,
@@ -62,8 +65,10 @@ def create_tables():
 		try:
 			cur.execute(video_sent_table)
 			print('video_sent table created successfully')
+			logging.info('video_sent table created successfully')
 		except:
 			print('Unable to create table!')
+			logging.error('Unable to create table!')
 		return con
 	else:
 		return None
@@ -118,6 +123,7 @@ def json_post_success(vidname,id):
 		except:
 			con.rollback()
 			print("[ERROR]: Cannot add entry to json_sent table!")
+			logging.error("[ERROR]: Cannot add entry to json_sent table!")
 	return False
 
 def video_post_success(vidname,id):
@@ -135,6 +141,7 @@ def video_post_success(vidname,id):
 		except:
 			con.rollback()
 			print("[ERROR]: Cannot add entry to video_sent table!")
+			logging.error("[ERROR]: Cannot add entry to video_sent table!")
 	return False	
 
 def answer_get_success(lid):
@@ -151,6 +158,7 @@ def answer_get_success(lid):
 			print(edelv)
 			con.rollback()
 			print("[ERROR]: Cannot delete entry from video_sent table!")
+			logging.error("[ERROR]: Cannot delete entry from video_sent table!")
 	return False
 
 def get_posted_qids():
@@ -165,6 +173,7 @@ def get_posted_qids():
 			return results
 		except:
 			print('[ERROR]: Problems fetching ids from video_sent table!')
+			logging.error('[ERROR]: Problems fetching ids from video_sent table!')
 	return []
 
 def get_remote2local_dict():
@@ -180,6 +189,7 @@ def get_remote2local_dict():
 				r2l[r[1]] = r[0]
 		except: 
 			print('[ERROR]: Problems fetching ids from video_sent table!')
+			logging.error('[ERROR]: Problems fetching ids from video_sent table!')
 	return r2l
 
 def new_log_entry(filename,ext ='mp4'):

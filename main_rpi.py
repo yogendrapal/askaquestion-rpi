@@ -18,6 +18,7 @@ import sys
 import facerec
 import shortuuid
 import vlc
+import logging
 
 stop_thread = False
 height=240
@@ -123,6 +124,7 @@ class check_buttons(Thread):
 			try:
 				if GPIO.input(18) == 0:
 					print("Button on pin 18 was pushed!")
+					logging.info("Button on pin 18 was pushed!")
 					home = False
 					if self.avr.is_recording():
 						self.avr.stop()
@@ -131,6 +133,7 @@ class check_buttons(Thread):
 						logger.new_log_entry(self.fname,self.avr.ext)
 						facerec.store_face_encodings(self.fe, self.fname)
 						print('Video was saved as "'+self.fname + '.' + self.avr.ext +'"\n')
+						logging.info('Video was saved as "'+self.fname + '.' + self.avr.ext +'"\n')
 						time.sleep(2)
 						enableHome()
 					else:
@@ -153,6 +156,7 @@ class check_buttons(Thread):
 
 				if GPIO.input(16) == 0:
 					print("Button on pin 16 was pushed!")
+					logging.info("Button on pin 16 was pushed!")
 					if self.avr.discard():
 						home = False
 						img = self.get_img("images/rec_discard.jpeg")
@@ -184,6 +188,7 @@ class check_buttons(Thread):
 
 				if GPIO.input(12) == 0:
 					print("Button on pin 12 was pushed!")
+					logging.info("Button on pin 12 was pushed!")
 					if not self.avr.is_recording():
 						home = False
 						img = self.get_img("images/please_look.jpeg")
@@ -191,6 +196,7 @@ class check_buttons(Thread):
 						resfid = facerec.fetch_fid()
 						if resfid:
 							print('Match Found: ',resfid)
+							logging.info('Match Found: ',resfid)
 							vpath = ""
 							for ans in os.listdir(ANSWER_DIR):
 								for qid in resfid:
@@ -216,11 +222,13 @@ class check_buttons(Thread):
 								time.sleep(2)
 						else:
 							print('No Match Found')
+							logging.info('No Match Found')
 						enableHome()
 						time.sleep(2)
 					
 			except Exception as e:
 				print(e)
+				logging.error(e)
 				self.avr.discard()
 				os.system('pkill -9 ffmpeg')
 				os.execv(sys.executable, ['python3'] + sys.argv)
@@ -259,7 +267,8 @@ def updater():
 	root.after(40,updater)
 
 print('Program Started...')
-
+logging.basicConfig(filename="rpilogs.log", level=logging.INFO)
+logging.info('Program Started...')
 root = Tk.Tk()
 
 #set first image 

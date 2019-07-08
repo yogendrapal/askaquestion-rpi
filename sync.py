@@ -8,7 +8,7 @@ import pprint
 import hashlib
 from config import *
 from logger import json_post_success,video_post_success,check_json_post_status,get_posted_qids, get_remote2local_dict, answer_get_success
-
+import logging
 def sync2server():
 	try:
 		if requests.head("http://%s:%d/"%(API_HOST,API_PORT),timeout=10).status_code != 200:
@@ -22,12 +22,14 @@ def sync2server():
 				if f == e:
 					continue
 				print('\n\n[INFO]: Syncing %s with server...'%f)
+				logging.info('\n\n[INFO]: Syncing %s with server...'%f)
 				try:
 					vid = f
 					vid_json = f[:f.index(e)] + '.json'
 					post_status = check_json_post_status(vid)
 					if post_status != False:
 						print('\n[INFO]: JSON already posted, id = %s' % post_status)
+						logging.info('\n[INFO]: JSON already posted, id = %s' % post_status)
 						if not postvideo(vid_json,vid,post_status):
 							return False
 					else:
@@ -36,6 +38,7 @@ def sync2server():
 					time.sleep(1)
 				except Exception as esync:
 					print(esync)
+					logging.error(str(esync))
 					continue
 	fetch_posted_questions()
 	return True
@@ -56,19 +59,23 @@ def postjson(jsonfile,vidname):
 		r = requests.post(url = API_ENDPOINT, data=json_data1,headers=headers)
 	except:
 		print('[ERROR]: Unable to communicate with the server! Please ensure that HOST & PORT are properly configured in config.py.\n')
+		logging.error('[ERROR]: Unable to communicate with the server! Please ensure that HOST & PORT are properly configured in config.py.\n')
 		return False
 
 	# extracting response text  
 	response_text = r.text
 	response_json=json.loads(response_text)
 	print("[INFO]: response:")
+	logging.info("[INFO]: response:")
 	pprint.pprint(response_json)
+	logging.info(str(response_json))
 	if "uploadStatus" in response_json and response_json["uploadStatus"] == "Successful":
 		id = response_json['id']
 		if json_post_success(vidname,id):
 			return postvideo(jsonfile,vidname,id)
 	else:
 		print('[ERROR]: failed to post json for %s'%jsonfile)
+		logging.error('[ERROR]: failed to post json for %s'%jsonfile)
 		return False
 
 def postvideo(jsonfile,vidname,id):
@@ -81,11 +88,16 @@ def postvideo(jsonfile,vidname,id):
 	time.sleep(1)
 	response = requests.post("http://%s:%d/question/add/%s"%(API_HOST,API_PORT,id), files=files)
 	print("\n[INFO]: response:")
+	logging.info("\n[INFO]: response:")
 	response_json = json.loads(response.text)
 	pprint.pprint(response_json)
+	logging.info(str(response_json))
 	print('\n--MD5--')
 	print('Actual MD5:\t' + original_hash)
 	print('Response MD5:\t' + response_json['md5']+'\n')
+	logging.info('\n--MD5--')
+	logging.info('Actual MD5:\t' + original_hash)
+	logging.info('Response MD5:\t' + response_json['md5']+'\n')
 	if "fileDownloadUri" in response_json and response_json['md5'] == original_hash:
 		#video upload was successful, now video and json can now be deleted
 		if video_post_success(vidname,id):
@@ -96,17 +108,20 @@ def postvideo(jsonfile,vidname,id):
 			os.system('rm -f %s%s'%(OUTPUT_DIR,vidname))
 			
 			print('[INFO]: deleted %s and %s from local file system\n'%(jsonfile,vidname))
+			logging.info('[INFO]: deleted %s and %s from local file system\n'%(jsonfile,vidname))
 			return True
 		else:
 			return False
 	else:
 		print('[ERROR]: failed to upload video for id %s'%id)
+		logging.error('[ERROR]: failed to upload video for id %s'%id)
 		return False
 
 def fetch_posted_questions():
 	idlist = get_posted_qids()
 	r2l = get_remote2local_dict()
 	print(idlist)
+	logging.info(str(idlist))
 	for qid in idlist:
 		API_ENDPOINT = "http://%s:%d/answer/%s" %(API_HOST,API_PORT,qid)
 		try:
@@ -115,6 +130,7 @@ def fetch_posted_questions():
 				lid = r2l[qid]
 		
 				print("[INFO]: Saving answer video for local_qid = %s\n"%lid)
+				logging.info("[INFO]: Saving answer video for local_qid = %s\n"%lid)
 				os.system("cd %s && rm -f %s*"%(ANSWER_DIR,lid))
 				open(ANSWER_DIR + lid,'wb').write(r.content)
 				answer_get_success(lid)
