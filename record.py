@@ -81,19 +81,21 @@ class AV_Recorder():
 			print('Unable to start recording')
 			logging.error('Unable to start recording')
 			self.pff = None
+			return False
 		self.output_name = filename
 		self.generate_cmd()
 		
 		self.pff = Popen(shlex.split(self.cmd), stdin = DEVNULL, stdout = DEVNULL, stderr = STDOUT)
-		time.sleep(1)
+		time.sleep(2)
 		if self.pff.poll():
 			print('There was some problem starting the recording. Retrying...')
-			self.record(filename,retry=retry+1)
+			return self.record(filename,retry=retry+1)
 		else:
 			print('\n--ffmpeg command--\n',self.cmd,'\n')
 			logging.info('\n--ffmpeg command--\n'+ self.cmd+'\n')
 			print('recording started...\n')
 			logging.info('recording started...\n')
+			return True
 
 	def stop(self):
 		self.pff.terminate()
