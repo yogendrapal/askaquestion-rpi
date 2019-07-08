@@ -86,9 +86,10 @@ class AV_Recorder():
 		self.generate_cmd()
 		
 		self.pff = Popen(shlex.split(self.cmd), stdin = DEVNULL, stdout = DEVNULL, stderr = STDOUT)
-		time.sleep(2)
+		time.sleep(3)
 		if self.pff.poll():
 			print('There was some problem starting the recording. Retrying...')
+			logging.error('There was some problem starting the recording. Retrying...')
 			return self.record(filename,retry=retry+1)
 		else:
 			print('\n--ffmpeg command--\n',self.cmd,'\n')
