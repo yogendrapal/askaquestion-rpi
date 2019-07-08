@@ -144,10 +144,12 @@ class check_buttons(Thread):
 						if self.fe:
 							img = self.get_img("images/please_wait.jpeg")
 							canvas.itemconfig(canvas.create_image(0, 0, anchor="nw", image=img),image=img)
-							self.avr.record(OUTPUT_DIR+self.fname)
-							img = self.get_img("images/record3.jpeg")
-							canvas.itemconfig(canvas.create_image(0, 0, anchor="nw", image=img),image=img)
-							time.sleep(2)
+							if self.avr.record(OUTPUT_DIR+self.fname):
+								img = self.get_img("images/record3.jpeg")
+								canvas.itemconfig(canvas.create_image(0, 0, anchor="nw", image=img),image=img)
+								time.sleep(2)
+							else:
+								enableHome()
 						else:
 							img = self.get_img("images/rec_discard.jpeg")
 							canvas.itemconfig(canvas.create_image(0, 0, anchor="nw", image=img),image=img)
