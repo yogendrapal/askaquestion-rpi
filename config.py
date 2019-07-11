@@ -7,9 +7,9 @@ except:
 	MACHINE_ID = 'UNKNOWN'
 	INSTITUTE_ID = 'UNKNOWN'
 
-RPI = False
+RPI = True
 
-API_HOST = 'localhost' #'104.237.9.77'
+API_HOST = '104.237.9.77'
 API_PORT = 8081
 OUTPUT_DIR = 'output/'
 ANSWER_DIR = 'answers/'
